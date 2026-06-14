@@ -176,6 +176,52 @@ function seedAccounts(): Account[] {
         },
       },
     },
+    {
+      password: "password",
+      savedJobs: ["product-design-intern", "software-engineering-intern"],
+      applications: [],
+      activePlan: "Pro",
+      paymentMethod: { type: "Mastercard", last4: "5678", expiry: "09/27" },
+      paymentHistory: [
+        { id: "inv-p01", date: "2026-06-01", description: "Student Pro Plan", amount: 24.99, status: "Paid" },
+        { id: "inv-p02", date: "2026-05-01", description: "Student Pro Plan", amount: 24.99, status: "Paid" },
+        { id: "inv-p03", date: "2026-04-01", description: "Student Pro Plan", amount: 24.99, status: "Paid" },
+      ],
+      user: {
+        id: "demo-student-pro",
+        role: "student",
+        name: "Sam Rivera",
+        email: "pro@demo.com",
+        createdAt: "2026-03-01",
+        student: {
+          headline: "Master of Data Science student — AI & ML focus",
+          location: "Sydney, NSW",
+          phone: "+61 411 000 000",
+          rightToWork: "I'm an Australian citizen",
+          resumeName: "Sam-Rivera-Resume.pdf",
+          education: [
+            {
+              id: "edu-1",
+              qualification: "Master of Data Science",
+              institution: "University of Sydney",
+              finished: "Expected 2027",
+              detail: "Specialising in machine learning and AI applications.",
+            },
+          ],
+          careerHistory: [
+            {
+              id: "role-1",
+              title: "Research Assistant",
+              organisation: "USyd AI Lab",
+              period: "2025 - Present",
+              location: "Sydney, NSW",
+              detail: "Assisted in NLP research and published two papers.",
+            },
+          ],
+          skills: ["Python", "TensorFlow", "Data Analysis", "Machine Learning", "SQL", "Research"],
+        },
+      },
+    },
   ];
 }
 
