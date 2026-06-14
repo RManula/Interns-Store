@@ -358,7 +358,12 @@ export function FloatingAIBot() {
                 <BotCharacter size={30} mood="happy" />
               </span>
               <div className="min-w-0 flex-1">
-                <p className="font-heading text-sm font-bold text-white">Interns AI</p>
+                <p className="flex items-center gap-2 font-heading text-sm font-bold text-white">
+                  Interns AI
+                  <span className="rounded-full bg-white/20 px-2 py-0.5 text-[0.58rem] font-extrabold uppercase tracking-wide text-white">
+                    {activePlan}
+                  </span>
+                </p>
                 <p className="flex items-center gap-1.5 text-[0.68rem] text-white/70">
                   <span className="inline-block size-1.5 rounded-full bg-mint-500" /> Career assistant · Online
                 </p>
