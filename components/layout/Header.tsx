@@ -45,9 +45,9 @@ const navigation: NavItem[] = [
     href: "/for-students",
     items: [
       { label: "Browse Internships", description: "Find roles built for students", href: "/browse", icon: Search },
-      { label: "How It Works", description: "From application to offer", href: "/for-students", icon: BookOpen },
-      { label: "Build Your Profile", description: "Stand out to employers", href: "/register", icon: User },
-      { label: "Saved & Applications", description: "Track everything in one place", href: "/for-students", icon: FileText },
+      { label: "Career Advice", description: "Guides, templates and tips", href: "/career-advice", icon: BookOpen },
+      { label: "Companies", description: "Explore employers hiring interns", href: "/companies", icon: Globe2 },
+      { label: "My Profile", description: "Build and edit your profile", href: "/profile", icon: User },
     ],
   },
   {
