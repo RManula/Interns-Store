@@ -343,6 +343,9 @@ export function FloatingAIBot() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.92, y: 12 }}
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            role="dialog"
+            aria-modal="false"
+            aria-label="Interns AI career assistant chat"
             className="absolute bottom-[112%] right-0 flex h-[460px] w-[340px] origin-bottom-right flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-[0_30px_80px_rgba(7,21,47,.32)]"
           >
             {/* header */}
@@ -376,7 +379,11 @@ export function FloatingAIBot() {
             </div>
 
             {/* messages */}
-            <div className="flex-1 space-y-3 overflow-y-auto bg-surface px-4 py-4">
+            <div
+              className="flex-1 space-y-3 overflow-y-auto bg-surface px-4 py-4"
+              aria-live="polite"
+              aria-atomic="false"
+            >
               {messages.map((m) => (
                 <div key={m.id} className={cnCol(m.role)}>
                   <div
