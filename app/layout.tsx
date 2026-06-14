@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
 import { AppProvider } from "@/lib/store";
 import { site } from "@/lib/siteConfig";
+import { FloatingAIBot } from "@/components/ui/FloatingAIBot";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main>{children}</main>
           <Footer />
+          <FloatingAIBot />
         </AppProvider>
       </body>
     </html>
