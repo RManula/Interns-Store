@@ -9,9 +9,12 @@ import {
   Box,
   BriefcaseBusiness,
   ChevronDown,
+  CreditCard,
   FileText,
   Globe2,
   GraduationCap,
+  LayoutDashboard,
+  LogOut,
   MapPin,
   Menu,
   Newspaper,
@@ -21,7 +24,8 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useApp } from "@/lib/store";
+import { cn, initials } from "@/lib/utils";
 
 type MenuItem = {
   label: string;
@@ -76,6 +80,7 @@ const navigation: NavItem[] = [
 
 export function Header() {
   const pathname = usePathname();
+  const { user, logout } = useApp();
   const headerRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -207,12 +212,88 @@ export function Header() {
           })}
         </nav>
 
-        <Link
-          href="/post"
-          className="hidden shrink-0 whitespace-nowrap rounded-full bg-coral-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-coral-500/25 transition hover:-translate-y-0.5 hover:bg-coral-600 lg:block"
-        >
-          Post an Internship
-        </Link>
+        <div className="hidden shrink-0 items-center gap-2 lg:flex">
+          {user ? (
+            <div className="relative">
+              <button
+                type="button"
+                aria-expanded={activeMenu === "account"}
+                onClick={() => setActiveMenu(activeMenu === "account" ? null : "account")}
+                className={cn(
+                  "flex items-center gap-2 rounded-full py-1.5 pe-2.5 ps-1.5 text-sm font-bold transition",
+                  isLight ? "bg-blue-50 text-navy-900 hover:bg-blue-100" : "bg-white/10 text-white hover:bg-white/20",
+                )}
+              >
+                <span className="grid size-8 place-items-center rounded-full bg-blue-600 text-xs text-white">
+                  {initials(user.name)}
+                </span>
+                {user.name.split(" ")[0]}
+                <ChevronDown size={14} className={cn("transition-transform", activeMenu === "account" && "rotate-180")} />
+              </button>
+              <AnimatePresence>
+                {activeMenu === "account" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -4, scale: 0.98 }}
+                    transition={{ duration: 0.16 }}
+                    className="absolute end-0 top-full w-60 pt-3"
+                  >
+                    <div className="rounded-2xl border border-line bg-white p-2 shadow-[0_24px_70px_rgba(7,21,47,.2)]">
+                      <div className="px-3 py-2">
+                        <p className="text-sm font-bold text-navy-950">{user.name}</p>
+                        <p className="truncate text-xs text-muted">{user.email}</p>
+                        <span className="mt-1 inline-block rounded-full bg-blue-50 px-2 py-0.5 text-[0.62rem] font-extrabold uppercase text-blue-700">
+                          {user.role}
+                        </span>
+                      </div>
+                      <Link
+                        href="/dashboard"
+                        onClick={() => setActiveMenu(null)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-navy-900 hover:bg-blue-50"
+                      >
+                        <LayoutDashboard size={16} className="text-blue-600" /> Dashboard
+                      </Link>
+                      <Link
+                        href="/billing"
+                        onClick={() => setActiveMenu(null)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-navy-900 hover:bg-blue-50"
+                      >
+                        <CreditCard size={16} className="text-blue-600" /> Billing & payments
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          logout();
+                          setActiveMenu(null);
+                        }}
+                        className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-navy-900 hover:bg-coral-500/10 hover:text-coral-600"
+                      >
+                        <LogOut size={16} /> Sign out
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className={cn(
+                "whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-bold transition",
+                isLight ? "text-navy-900 hover:bg-blue-50" : "text-white/85 hover:bg-white/10",
+              )}
+            >
+              Sign in
+            </Link>
+          )}
+          <Link
+            href={user?.role === "employer" ? "/post" : user ? "/browse" : "/register"}
+            className="whitespace-nowrap rounded-full bg-coral-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-coral-500/25 transition hover:-translate-y-0.5 hover:bg-coral-600"
+          >
+            {user?.role === "employer" ? "Post an Internship" : user ? "Find Internships" : "Join free"}
+          </Link>
+        </div>
 
         <button
           type="button"

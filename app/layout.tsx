@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { AppProvider } from "@/lib/store";
 import { site } from "@/lib/siteConfig";
 
 const poppins = Poppins({
@@ -39,10 +40,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en-AU" className={`${poppins.variable} ${openSans.variable}`}>
       <body>
-        <ScrollProgress />
-        <Header />
-        <main>{children}</main>
-        <Footer />
+        <AppProvider>
+          <ScrollProgress />
+          <Header />
+          <main>{children}</main>
+          <Footer />
+        </AppProvider>
       </body>
     </html>
   );

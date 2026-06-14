@@ -61,7 +61,7 @@ export default function Home() {
             <Button href="/browse" variant="secondary">Browse all internships</Button>
           </div>
           <StaggerGrid className="mt-12 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            {internships.map((internship) => <StaggerItem key={internship.id}><InternshipCard internship={internship} /></StaggerItem>)}
+            {internships.slice(0, 4).map((internship) => <StaggerItem key={internship.id}><InternshipCard internship={internship} /></StaggerItem>)}
           </StaggerGrid>
         </div>
       </MotionSection>
