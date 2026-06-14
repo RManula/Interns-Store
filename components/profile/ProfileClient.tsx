@@ -6,11 +6,11 @@ import { useRouter } from "next/navigation";
 import {
   Briefcase,
   Building2,
+  Code2,
   FileText,
-  Github,
   GraduationCap,
   Globe,
-  Linkedin,
+  Link2,
   MapPin,
   Pencil,
   Phone,
@@ -60,8 +60,8 @@ export function ProfileClient() {
   const s = user.student;
   const links = [
     s?.portfolioUrl && { icon: Globe, label: "Portfolio", href: s.portfolioUrl },
-    s?.linkedinUrl && { icon: Linkedin, label: "LinkedIn", href: s.linkedinUrl },
-    s?.githubUrl && { icon: Github, label: "GitHub", href: s.githubUrl },
+    s?.linkedinUrl && { icon: Link2, label: "LinkedIn", href: s.linkedinUrl },
+    s?.githubUrl && { icon: Code2, label: "GitHub", href: s.githubUrl },
   ].filter(Boolean) as { icon: typeof Globe; label: string; href: string }[];
 
   return (
