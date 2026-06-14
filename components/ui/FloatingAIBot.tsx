@@ -2,10 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { X } from "lucide-react";
+import { Send, Sparkles, X } from "lucide-react";
 import { useApp } from "@/lib/store";
 
 type Mood = "normal" | "happy";
+type ChatMessage = { id: number; role: "bot" | "user"; text: string };
+
+const SUGGESTIONS = [
+  "Find internships for my degree 🎓",
+  "Review my CV 📄",
+  "Help me prep for an interview 💬",
+  "Show me remote internships 🌏",
+  "Paid vs credit internships?",
+];
+
+const BOT_REPLY =
+  "Great question! In the full version I'll search live internships and give you a tailored answer. For now, head to Browse and try filters that match your profile — I'll be right here if you need me 🚀";
+
+const WELCOME =
+  "Hi! I'm your Interns AI assistant 🤖 I can help you find internships, polish your CV and prep for interviews. What would you like help with?";
 
 /* ──────────────────────────────────────────────────────────────────────────
    BotCharacter — a hand-built SVG recreation of the Rakata 3D assistant bot.
@@ -187,14 +202,36 @@ export function FloatingAIBot() {
   const { user, activePlan } = useApp();
   const reduce = useReducedMotion();
   const [dismissed, setDismissed] = useState(false);
+  const [open, setOpen] = useState(false);
   const [eye, setEye] = useState({ x: 0, y: 0 });
   const [mood, setMood] = useState<Mood>("normal");
   const [blink, setBlink] = useState(false);
   const [teaser, setTeaser] = useState(false);
   const [teaserIdx, setTeaserIdx] = useState(0);
+  const [messages, setMessages] = useState<ChatMessage[]>([{ id: 0, role: "bot", text: WELCOME }]);
+  const [draft, setDraft] = useState("");
+  const msgEndRef = useRef<HTMLDivElement>(null);
   const botRef = useRef<HTMLDivElement>(null);
 
   const isPaid = user?.role === "student" && (activePlan === "Plus" || activePlan === "Pro");
+
+  const send = (text: string) => {
+    const value = text.trim();
+    if (!value) return;
+    setMessages((prev) => {
+      const base = prev.length;
+      return [...prev, { id: base, role: "user", text: value }];
+    });
+    setDraft("");
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { id: prev.length, role: "bot", text: BOT_REPLY }]);
+    }, 650);
+  };
+
+  // auto-scroll chat to latest
+  useEffect(() => {
+    if (open) msgEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, open]);
 
   // cursor eye-tracking
   useEffect(() => {
@@ -249,9 +286,106 @@ export function FloatingAIBot() {
 
   return (
     <div ref={botRef} className="fixed bottom-5 right-5 z-50 select-none">
-      {/* teaser bubble */}
+      {/* chat panel */}
       <AnimatePresence>
-        {teaser && (
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 12 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            className="absolute bottom-[112%] right-0 flex h-[460px] w-[340px] origin-bottom-right flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-[0_30px_80px_rgba(7,21,47,.32)]"
+          >
+            {/* header */}
+            <div className="flex items-center gap-3 px-4 py-3.5" style={{ background: "linear-gradient(135deg, #0b1f46, #246bfe)" }}>
+              <span className="grid size-10 shrink-0 place-items-center rounded-full bg-white/15 backdrop-blur">
+                <BotCharacter size={30} mood="happy" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="font-heading text-sm font-bold text-white">Interns AI</p>
+                <p className="flex items-center gap-1.5 text-[0.68rem] text-white/70">
+                  <span className="inline-block size-1.5 rounded-full bg-mint-500" /> Career assistant · Online
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                className="grid size-8 place-items-center rounded-full text-white/70 transition hover:bg-white/15 hover:text-white"
+                aria-label="Close chat"
+              >
+                <X size={17} />
+              </button>
+            </div>
+
+            {/* messages */}
+            <div className="flex-1 space-y-3 overflow-y-auto bg-surface px-4 py-4">
+              {messages.map((m) => (
+                <div key={m.id} className={cnRow(m.role)}>
+                  <div
+                    className={
+                      m.role === "user"
+                        ? "max-w-[80%] rounded-2xl rounded-br-sm bg-blue-600 px-3.5 py-2.5 text-sm font-medium text-white"
+                        : "max-w-[82%] rounded-2xl rounded-bl-sm border border-line bg-white px-3.5 py-2.5 text-sm leading-6 text-navy-900 shadow-sm"
+                    }
+                  >
+                    {m.text}
+                  </div>
+                </div>
+              ))}
+
+              {/* suggested questions */}
+              {messages.length <= 1 && (
+                <div className="pt-1">
+                  <p className="mb-2 flex items-center gap-1.5 text-[0.66rem] font-extrabold uppercase tracking-widest text-muted">
+                    <Sparkles size={12} className="text-blue-600" /> Popular questions
+                  </p>
+                  <div className="flex flex-col gap-2">
+                    {SUGGESTIONS.map((q) => (
+                      <button
+                        key={q}
+                        type="button"
+                        onClick={() => send(q)}
+                        className="rounded-xl border border-line bg-white px-3 py-2 text-left text-xs font-semibold text-navy-900 transition hover:border-blue-500/50 hover:bg-blue-50"
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div ref={msgEndRef} />
+            </div>
+
+            {/* input */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                send(draft);
+              }}
+              className="flex items-center gap-2 border-t border-line bg-white px-3 py-3"
+            >
+              <input
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder="Ask me anything…"
+                className="h-11 flex-1 rounded-full border border-line bg-surface px-4 text-sm text-ink outline-none transition focus:border-blue-500 focus:ring-[3px] focus:ring-blue-500/20"
+              />
+              <button
+                type="submit"
+                disabled={!draft.trim()}
+                className="grid size-11 shrink-0 place-items-center rounded-full bg-blue-600 text-white transition hover:bg-blue-700 disabled:opacity-40"
+                aria-label="Send"
+              >
+                <Send size={17} />
+              </button>
+            </form>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* teaser bubble (hidden while chat is open) */}
+      <AnimatePresence>
+        {teaser && !open && (
           <motion.div
             key={teaserIdx}
             initial={{ opacity: 0, scale: 0.9, y: 6 }}
@@ -273,21 +407,28 @@ export function FloatingAIBot() {
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         onMouseEnter={() => setMood("happy")}
         onMouseLeave={() => setMood("normal")}
+        onClick={() => setOpen((v) => !v)}
         title="AI Career Assistant"
         className="block cursor-pointer transition-transform hover:scale-105"
       >
-        <BotCharacter size={104} eye={eye} mood={mood} blink={blink} />
+        <BotCharacter size={104} eye={open ? { x: 0, y: 0 } : eye} mood={open ? "happy" : mood} blink={blink} />
       </motion.button>
 
       {/* dismiss */}
-      <button
-        type="button"
-        onClick={() => setDismissed(true)}
-        className="absolute -right-1 top-0 grid size-5 place-items-center rounded-full bg-navy-900 text-white/60 shadow hover:bg-navy-800 hover:text-white"
-        title="Hide assistant"
-      >
-        <X size={11} />
-      </button>
+      {!open && (
+        <button
+          type="button"
+          onClick={() => setDismissed(true)}
+          className="absolute -right-1 top-0 grid size-5 place-items-center rounded-full bg-navy-900 text-white/60 shadow hover:bg-navy-800 hover:text-white"
+          title="Hide assistant"
+        >
+          <X size={11} />
+        </button>
+      )}
     </div>
   );
+}
+
+function cnRow(role: "bot" | "user") {
+  return role === "user" ? "flex justify-end" : "flex justify-start";
 }
