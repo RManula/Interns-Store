@@ -346,7 +346,7 @@ export function FloatingAIBot() {
             role="dialog"
             aria-modal="false"
             aria-label="Interns AI career assistant chat"
-            className="absolute bottom-[112%] right-0 flex h-[460px] w-[340px] origin-bottom-right flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-[0_30px_80px_rgba(7,21,47,.32)]"
+            className="absolute bottom-[112%] right-0 flex h-[min(460px,70vh)] w-[min(340px,calc(100vw-2.5rem))] origin-bottom-right flex-col overflow-hidden rounded-3xl border border-line bg-white shadow-[0_30px_80px_rgba(7,21,47,.32)]"
           >
             {/* header */}
             <div className="flex items-center gap-3 px-4 py-3.5" style={{ background: "linear-gradient(135deg, #0b1f46, #246bfe)" }}>
