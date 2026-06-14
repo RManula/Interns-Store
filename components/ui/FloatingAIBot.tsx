@@ -7,7 +7,18 @@ import { useApp } from "@/lib/store";
 import { DEFAULT_SUGGESTIONS as SUGGESTIONS, getReply, TEASERS, welcomeMessage } from "@/lib/botKnowledge";
 
 type Mood = "normal" | "happy";
-type ChatMessage = { id: number; role: "bot" | "user"; text: string };
+type ChatMessage = { id: number; role: "bot" | "user"; text: string; ts?: number };
+
+function timeAgo(ts?: number) {
+  if (!ts) return "";
+  const s = Math.floor((Date.now() - ts) / 1000);
+  if (s < 45) return "Just now";
+  const m = Math.floor(s / 60);
+  if (m < 60) return `${m}m ago`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}h ago`;
+  return `${Math.floor(h / 24)}d ago`;
+}
 
 const WELCOME = welcomeMessage();
 
@@ -225,15 +236,12 @@ export function FloatingAIBot() {
   const send = (text: string) => {
     const value = text.trim();
     if (!value) return;
-    setMessages((prev) => {
-      const base = prev.length;
-      return [...prev, { id: base, role: "user", text: value }];
-    });
+    setMessages((prev) => [...prev, { id: prev.length, role: "user", text: value, ts: Date.now() }]);
     setDraft("");
     setTyping(true);
     setTimeout(() => {
       setTyping(false);
-      setMessages((prev) => [...prev, { id: prev.length, role: "bot", text: getReply(value) }]);
+      setMessages((prev) => [...prev, { id: prev.length, role: "bot", text: getReply(value), ts: Date.now() }]);
     }, 1100);
   };
 
@@ -329,7 +337,7 @@ export function FloatingAIBot() {
             {/* messages */}
             <div className="flex-1 space-y-3 overflow-y-auto bg-surface px-4 py-4">
               {messages.map((m) => (
-                <div key={m.id} className={cnRow(m.role)}>
+                <div key={m.id} className={cnCol(m.role)}>
                   <div
                     className={
                       m.role === "user"
@@ -339,6 +347,7 @@ export function FloatingAIBot() {
                   >
                     {m.text}
                   </div>
+                  {m.ts && <span className="mt-1 px-1 text-[0.62rem] text-muted">{timeAgo(m.ts)}</span>}
                 </div>
               ))}
 
@@ -454,6 +463,6 @@ export function FloatingAIBot() {
   );
 }
 
-function cnRow(role: "bot" | "user") {
-  return role === "user" ? "flex justify-end" : "flex justify-start";
+function cnCol(role: "bot" | "user") {
+  return role === "user" ? "flex flex-col items-end" : "flex flex-col items-start";
 }
