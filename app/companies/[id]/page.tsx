@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowRight, BadgeCheck, Building2, CalendarDays, Globe, MapPin, Star, Users } from "lucide-react";
 import { companies, internships } from "@/lib/data";
 import { CompanyLogo } from "@/components/shared/CompanyLogo";
+import { CompanyReviews } from "@/components/reviews/CompanyReviews";
 
 export function generateStaticParams() {
   return companies.map((c) => ({ id: c.id }));
@@ -118,6 +119,8 @@ export default async function CompanyProfilePage({ params }: { params: Promise<{
                   <p className="mt-3 text-sm text-muted">No open internships right now. Check back soon.</p>
                 )}
               </div>
+
+              <CompanyReviews companyId={company.id} companyName={company.name} />
             </div>
 
             <aside className="space-y-4">

@@ -152,6 +152,18 @@ export type Application = {
   answers: Record<string, string>;
 };
 
+export type Review = {
+  id: string;
+  companyId: string;
+  companyName: string;
+  authorName: string;
+  authorRole: UserRole;
+  rating: number; // 1-5
+  title: string;
+  body: string;
+  date: string; // ISO
+};
+
 export type RecentSearch = {
   id: string;
   q: string;

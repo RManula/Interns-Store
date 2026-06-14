@@ -12,6 +12,7 @@ import {
   MapPin,
   Plus,
   Rocket,
+  Star,
   Users,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
@@ -139,6 +140,9 @@ function StudentDashboard() {
             <Link href="/billing" className="flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-5 py-3 text-sm font-bold text-navy-900 hover:bg-blue-50">
               <FileText size={16} /> Billing & payments
             </Link>
+            <Link href="/reviews" className="flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-5 py-3 text-sm font-bold text-navy-900 hover:bg-blue-50">
+              <Star size={16} /> Leave a review
+            </Link>
           </aside>
         </div>
       </div>
@@ -212,6 +216,9 @@ function EmployerDashboard() {
             </Link>
             <Link href="/pricing#employers" className="flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">
               <Rocket size={16} /> Manage plan ({employer?.plan})
+            </Link>
+            <Link href="/reviews" className="flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-5 py-3 text-sm font-bold text-navy-900 hover:bg-blue-50">
+              <Star size={16} /> Leave a review
             </Link>
           </aside>
         </div>

@@ -17,6 +17,7 @@ import type {
   PaymentMethod,
   PaymentRecord,
   RecentSearch,
+  Review,
   StudentProfile,
   User,
 } from "@/lib/types";
@@ -73,6 +74,8 @@ type AppContextValue = {
   upgradePlan: (plan: string, method: PaymentMethod, amount: number, description: string) => void;
   updatePaymentMethod: (method: PaymentMethod) => void;
   cancelPlan: () => void;
+  reviews: Review[];
+  addReview: (review: Omit<Review, "id" | "date">) => void;
 };
 
 const ACCOUNTS_KEY = "interns-store:accounts";
@@ -80,6 +83,13 @@ const SESSION_KEY = "interns-store:session";
 const RECENT_KEY = "interns-store:recent-searches";
 const LISTINGS_KEY = "interns-store:listings";
 const CART_KEY = "interns-store:cart";
+const REVIEWS_KEY = "interns-store:reviews";
+
+const SEED_REVIEWS: Review[] = [
+  { id: "rev-seed-1", companyId: "atlassian", companyName: "Atlassian", authorName: "Priya N.", authorRole: "student", rating: 5, title: "Best first experience", body: "Mentors actually invested time in me and I shipped real features. Felt like part of the team from week one.", date: "2026-05-20" },
+  { id: "rev-seed-2", companyId: "commbank", companyName: "CommBank", authorName: "Liam R.", authorRole: "student", rating: 4, title: "Structured and supportive", body: "The 12-week program was well organised with clear goals. Great exposure to how a big bank builds software.", date: "2026-05-02" },
+  { id: "rev-seed-3", companyId: "google", companyName: "Google", authorName: "Sam T.", authorRole: "student", rating: 5, title: "Learned an incredible amount", body: "Working on large-scale systems with world-class engineers was a genuine career accelerator.", date: "2026-04-18" },
+];
 
 const AppContext = createContext<AppContextValue | null>(null);
 
@@ -232,6 +242,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
   const [postedListings, setPostedListings] = useState<Internship[]>([]);
   const [cart, setCartState] = useState<CartItem | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
 
   useEffect(() => {
     const stored = readJSON<Account[]>(ACCOUNTS_KEY, []);
@@ -242,6 +253,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setRecentSearches(readJSON<RecentSearch[]>(RECENT_KEY, []));
     setPostedListings(readJSON<Internship[]>(LISTINGS_KEY, []));
     setCartState(readJSON<CartItem | null>(CART_KEY, null));
+    const storedReviews = readJSON<Review[]>(REVIEWS_KEY, []);
+    setReviews(storedReviews.length ? storedReviews : SEED_REVIEWS);
     setReady(true);
   }, []);
 
@@ -470,6 +483,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
     updateCurrentAccount((account) => ({ ...account, activePlan: "Free" }));
   }, [updateCurrentAccount]);
 
+  const addReview = useCallback<AppContextValue["addReview"]>((review) => {
+    const entry: Review = { ...review, id: uid("review"), date: new Date().toISOString() };
+    setReviews((prev) => {
+      const next = [entry, ...prev];
+      writeJSON(REVIEWS_KEY, next);
+      return next;
+    });
+  }, []);
+
   const value = useMemo<AppContextValue>(
     () => ({
       ready,
@@ -503,6 +525,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       upgradePlan,
       updatePaymentMethod,
       cancelPlan,
+      reviews,
+      addReview,
     }),
     [
       ready,
@@ -510,6 +534,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       recentSearches,
       postedListings,
       cart,
+      reviews,
+      addReview,
       login,
       registerStudent,
       registerEmployer,
