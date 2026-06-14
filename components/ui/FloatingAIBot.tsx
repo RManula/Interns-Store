@@ -193,6 +193,7 @@ export function FloatingAIBot() {
   const [teaserIdx, setTeaserIdx] = useState(0);
   const [messages, setMessages] = useState<ChatMessage[]>([{ id: 0, role: "bot", text: WELCOME }]);
   const [draft, setDraft] = useState("");
+  const [typing, setTyping] = useState(false);
   const msgEndRef = useRef<HTMLDivElement>(null);
   const botRef = useRef<HTMLDivElement>(null);
 
@@ -206,15 +207,17 @@ export function FloatingAIBot() {
       return [...prev, { id: base, role: "user", text: value }];
     });
     setDraft("");
+    setTyping(true);
     setTimeout(() => {
+      setTyping(false);
       setMessages((prev) => [...prev, { id: prev.length, role: "bot", text: getReply(value) }]);
-    }, 650);
+    }, 1100);
   };
 
   // auto-scroll chat to latest
   useEffect(() => {
     if (open) msgEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, open]);
+  }, [messages, typing, open]);
 
   // cursor eye-tracking
   useEffect(() => {
@@ -316,8 +319,24 @@ export function FloatingAIBot() {
                 </div>
               ))}
 
+              {/* typing indicator */}
+              {typing && (
+                <div className="flex justify-start">
+                  <div className="flex items-center gap-1.5 rounded-2xl rounded-bl-sm border border-line bg-white px-4 py-3 shadow-sm">
+                    {[0, 1, 2].map((i) => (
+                      <motion.span
+                        key={i}
+                        className="size-1.5 rounded-full bg-muted"
+                        animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
+                        transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* suggested questions */}
-              {messages.length <= 1 && (
+              {messages.length <= 1 && !typing && (
                 <div className="pt-1">
                   <p className="mb-2 flex items-center gap-1.5 text-[0.66rem] font-extrabold uppercase tracking-widest text-muted">
                     <Sparkles size={12} className="text-blue-600" /> Popular questions
