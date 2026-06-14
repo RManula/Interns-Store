@@ -7,15 +7,45 @@ import {
   Network,
   Play,
 } from "lucide-react";
-import { nav, site, social } from "@/lib/siteConfig";
+import { site, social } from "@/lib/siteConfig";
 
 const icons = [Camera, MessageCircle, Network, Play];
+
+const exploreLinks = [
+  { label: "Browse internships", href: "/browse" },
+  { label: "For students", href: "/for-students" },
+  { label: "Career advice", href: "/career-advice" },
+  { label: "Companies", href: "/companies" },
+  { label: "My profile", href: "/profile" },
+  { label: "Pricing / Plans", href: "/pricing" },
+];
+
+const companyLinks = [
+  { label: "About", href: "/about" },
+  { label: "Blog", href: "/blog" },
+  { label: "For employers", href: "/for-employers" },
+  { label: "Help centre", href: "/help" },
+  { label: "Contact us", href: "/contact" },
+];
+
+const legalLinks = [
+  { label: "Safe searching", href: "/security" },
+  { label: "Report a listing", href: "/report-listing" },
+  { label: "Community guidelines", href: "/community-guidelines" },
+  { label: "Terms", href: "/terms" },
+  { label: "Privacy", href: "/privacy" },
+  { label: "Cookie policy", href: "/cookie-policy" },
+  { label: "Collection notice", href: "/collection-notice" },
+  { label: "Cancellation policy", href: "/cancellation-policy" },
+  { label: "Refund policy", href: "/refund-policy" },
+  { label: "Accessibility", href: "/accessibility" },
+];
 
 export function Footer() {
   return (
     <footer className="bg-navy-950 text-white">
       <div className="container-shell py-16 lg:py-20">
-        <div className="grid gap-10 border-b border-white/10 pb-14 lg:grid-cols-[1.15fr_.85fr_.85fr_1.2fr]">
+        <div className="grid gap-10 border-b border-white/10 pb-14 lg:grid-cols-[1.3fr_.75fr_.75fr_.85fr_1.05fr]">
           <div>
             <Link href="/" className="flex items-center gap-3 font-heading text-xl font-bold">
               <span className="grid size-11 place-items-center rounded-xl bg-blue-600">
@@ -44,42 +74,9 @@ export function Footer() {
             </div>
           </div>
 
-          <div>
-            <h2 className="text-sm font-bold uppercase tracking-[0.16em] text-white/45">
-              Explore
-            </h2>
-            <div className="mt-5 space-y-3">
-              {nav.slice(0, 5).map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block text-sm text-white/65 transition hover:translate-x-1 hover:text-white"
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <h2 className="text-sm font-bold uppercase tracking-[0.16em] text-white/45">
-              Company
-            </h2>
-            <div className="mt-5 space-y-3">
-              {nav.slice(5).map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="block text-sm text-white/65 transition hover:translate-x-1 hover:text-white"
-                >
-                  {item.label}
-                </Link>
-              ))}
-              <Link href="/privacy" className="block text-sm text-white/65 hover:text-white">
-                Privacy & safety
-              </Link>
-            </div>
-          </div>
+          <FooterCol title="Explore" links={exploreLinks} />
+          <FooterCol title="Company" links={companyLinks} />
+          <FooterCol title="Legal & safety" links={legalLinks} />
 
           <div>
             <h2 className="font-heading text-xl font-semibold">Internship intelligence, weekly.</h2>
@@ -116,5 +113,24 @@ export function Footer() {
         </p>
       </div>
     </footer>
+  );
+}
+
+function FooterCol({ title, links }: { title: string; links: { label: string; href: string }[] }) {
+  return (
+    <div>
+      <h2 className="text-sm font-bold uppercase tracking-[0.16em] text-white/45">{title}</h2>
+      <div className="mt-5 space-y-3">
+        {links.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="block text-sm text-white/65 transition hover:translate-x-1 hover:text-white"
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
