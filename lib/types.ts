@@ -20,6 +20,22 @@ export type Company = {
   /** Logo background colour. */
   color: string;
   tagline: string;
+  /** Path under /public to the transparent logo, e.g. /companies/logos/google-logo-transparent.png */
+  logo?: string;
+  /** Path under /public to the profile banner. */
+  banner?: string;
+  website?: string;
+  /** Headquarters / main location. */
+  location?: string;
+  founded?: string;
+  /** Approximate employee count for display. */
+  employees?: string;
+  /** Demo student rating out of 5. */
+  rating?: number;
+  /** Technologies / tools used. */
+  tech?: string[];
+  /** Why intern here bullets. */
+  benefits?: string[];
 };
 
 export type Internship = {
