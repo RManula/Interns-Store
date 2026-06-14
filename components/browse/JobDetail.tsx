@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -7,10 +8,13 @@ import {
   Bookmark,
   BriefcaseBusiness,
   Building2,
+  Check,
   CheckCircle2,
   Clock3,
   ExternalLink,
+  Flag,
   MapPin,
+  Share2,
   ShieldAlert,
   Sparkles,
 } from "lucide-react";
@@ -29,6 +33,7 @@ export function JobDetail({ internship, company, variant = "page" }: JobDetailPr
   const { user, isSaved, toggleSave } = useApp();
   const saved = isSaved(internship.id);
   const applyHref = `/internships/${internship.id}/apply`;
+  const [copied, setCopied] = useState(false);
 
   const handleSave = () => {
     if (!user) {
@@ -36,6 +41,22 @@ export function JobDetail({ internship, company, variant = "page" }: JobDetailPr
       return;
     }
     toggleSave(internship.id);
+  };
+
+  const handleShare = async () => {
+    const url = typeof window !== "undefined" ? `${window.location.origin}/internships/${internship.id}` : "";
+    const shareData = { title: `${internship.role} — ${internship.company}`, url };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1800);
+    } catch {
+      /* user cancelled share */
+    }
   };
 
   const meta = [
@@ -142,6 +163,20 @@ export function JobDetail({ internship, company, variant = "page" }: JobDetailPr
             <Bookmark size={17} className={cn(saved && "fill-blue-600")} />
             {saved ? "Saved" : "Save"}
           </button>
+          <button
+            type="button"
+            onClick={handleShare}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-line bg-white px-5 text-sm font-bold text-navy-900 transition hover:bg-blue-50"
+          >
+            {copied ? <Check size={17} className="text-emerald-600" /> : <Share2 size={17} />}
+            {copied ? "Copied!" : "Share"}
+          </button>
+          <Link
+            href={`/report-listing?listingId=${internship.id}`}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-4 text-sm font-bold text-muted transition hover:bg-coral-500/10 hover:text-coral-600"
+          >
+            <Flag size={16} /> Report
+          </Link>
           {variant === "preview" && (
             <Link
               href={`/internships/${internship.id}`}
