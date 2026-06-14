@@ -331,14 +331,24 @@ export function Header() {
                 </Link>
               ) : (
                 <div key={item.label} className="border-t border-line first:border-0">
-                  <button
-                    type="button"
-                    className="flex w-full items-center justify-between px-4 py-3 text-sm font-bold text-navy-900"
-                    onClick={() => setActiveMenu(activeMenu === item.label ? null : item.label)}
-                  >
-                    {item.label}
-                    <ChevronDown size={16} className={cn("transition-transform", activeMenu === item.label && "rotate-180")} />
-                  </button>
+                  <div className="flex items-center">
+                    <Link
+                      href={item.href}
+                      onClick={() => setMobileOpen(false)}
+                      className="flex-1 px-4 py-3 text-sm font-bold text-navy-900 hover:text-blue-700"
+                    >
+                      {item.label}
+                    </Link>
+                    <button
+                      type="button"
+                      aria-label={`Toggle ${item.label} menu`}
+                      aria-expanded={activeMenu === item.label}
+                      className="px-4 py-3 text-navy-900"
+                      onClick={() => setActiveMenu(activeMenu === item.label ? null : item.label)}
+                    >
+                      <ChevronDown size={16} className={cn("transition-transform", activeMenu === item.label && "rotate-180")} />
+                    </button>
+                  </div>
                   <AnimatePresence initial={false}>
                     {activeMenu === item.label && (
                       <motion.div
