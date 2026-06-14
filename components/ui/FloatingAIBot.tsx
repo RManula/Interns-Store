@@ -197,6 +197,7 @@ export function FloatingAIBot() {
   const reduce = useReducedMotion();
   const [dismissed, setDismissed] = useState(false);
   const [open, setOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const [eye, setEye] = useState({ x: 0, y: 0 });
   const [mood, setMood] = useState<Mood>("normal");
   const [blink, setBlink] = useState(false);
@@ -490,11 +491,22 @@ export function FloatingAIBot() {
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         onMouseEnter={() => setMood("happy")}
         onMouseLeave={() => setMood("normal")}
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => {
+          setOpen((v) => !v);
+          setHasOpened(true);
+        }}
         title="AI Career Assistant"
-        className="block cursor-pointer transition-transform hover:scale-105"
+        className="relative block cursor-pointer transition-transform hover:scale-105"
       >
         <BotCharacter size={104} eye={open ? { x: 0, y: 0 } : eye} mood={open ? "happy" : mood} blink={blink} />
+        {!hasOpened && !open && (
+          <span className="absolute right-4 top-3 flex size-3.5">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-coral-500 opacity-75" />
+            <span className="relative inline-flex size-3.5 items-center justify-center rounded-full bg-coral-500 text-[0.55rem] font-extrabold text-white">
+              1
+            </span>
+          </span>
+        )}
       </motion.button>
 
       {/* dismiss */}
