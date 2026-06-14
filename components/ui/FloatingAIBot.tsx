@@ -198,6 +198,29 @@ export function FloatingAIBot() {
   const botRef = useRef<HTMLDivElement>(null);
 
   const isPaid = user?.role === "student" && (activePlan === "Plus" || activePlan === "Pro");
+  const chatKey = user ? `interns-store:chat:${user.id}` : null;
+
+  // restore saved conversation for this user
+  useEffect(() => {
+    if (!chatKey) return;
+    try {
+      const raw = window.localStorage.getItem(chatKey);
+      const parsed = raw ? (JSON.parse(raw) as ChatMessage[]) : null;
+      if (Array.isArray(parsed) && parsed.length) setMessages(parsed);
+    } catch {
+      /* ignore corrupt history */
+    }
+  }, [chatKey]);
+
+  // persist conversation
+  useEffect(() => {
+    if (!chatKey) return;
+    try {
+      window.localStorage.setItem(chatKey, JSON.stringify(messages));
+    } catch {
+      /* storage full or unavailable */
+    }
+  }, [chatKey, messages]);
 
   const send = (text: string) => {
     const value = text.trim();
