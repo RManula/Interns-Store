@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollProgress } from "@/components/layout/ScrollProgress";
+import { BackToTop } from "@/components/layout/BackToTop";
 import { AppProvider } from "@/lib/store";
 import { site } from "@/lib/siteConfig";
 import { FloatingAIBot } from "@/components/ui/FloatingAIBot";
@@ -46,6 +47,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main>{children}</main>
           <Footer />
+          <BackToTop />
           <FloatingAIBot />
         </AppProvider>
       </body>
