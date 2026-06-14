@@ -85,6 +85,19 @@ export type StudentProfile = {
   careerHistory: CareerRole[];
   skills: string[];
   resumeName: string | null;
+  /** Richer profile fields (all optional for backward compatibility). */
+  summary?: string;
+  university?: string;
+  degree?: string;
+  graduationYear?: string;
+  availability?: string;
+  preferredLocations?: string;
+  remotePreference?: WorkMode | "Any";
+  portfolioUrl?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  /** Privacy controls. */
+  discoverable?: boolean;
 };
 
 export type EmployerProfile = {
