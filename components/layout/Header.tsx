@@ -360,11 +360,11 @@ export function Header() {
               ),
             )}
             <Link
-              href="/post"
+              href={user?.role === "employer" ? "/post" : user ? "/browse" : "/register"}
               onClick={() => setMobileOpen(false)}
-              className="mt-2 block rounded-2xl bg-coral-500 px-4 py-3 text-center text-sm font-bold text-white"
+              className="mt-3 block rounded-2xl bg-coral-500 px-4 py-3 text-center text-sm font-bold text-white"
             >
-              Post an Internship
+              {user?.role === "employer" ? "Post an Internship" : user ? "Find Internships" : "Join free"}
             </Link>
           </motion.div>
         )}
