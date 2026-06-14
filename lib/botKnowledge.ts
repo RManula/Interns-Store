@@ -19,6 +19,50 @@ export const DEFAULT_SUGGESTIONS = [
   "Paid vs credit internships?",
 ];
 
+const PAGE_SUGGESTIONS: { match: string; questions: string[] }[] = [
+  {
+    match: "/browse",
+    questions: [
+      "Which filters should I use? 🔍",
+      "Show me remote internships 🌏",
+      "What does 'credit eligible' mean?",
+      "Find internships for my degree 🎓",
+    ],
+  },
+  {
+    match: "/dashboard",
+    questions: [
+      "How do I track my applications? 📊",
+      "Review my CV 📄",
+      "How can I improve my profile?",
+      "What should I apply to next?",
+    ],
+  },
+  {
+    match: "/internships",
+    questions: [
+      "Is this a good role for me? 🤔",
+      "Help me write a cover note ✍️",
+      "What should I ask in the interview?",
+      "How do I stand out for this one?",
+    ],
+  },
+  {
+    match: "/billing",
+    questions: [
+      "What do I get with my plan? ⭐",
+      "How do I change my plan?",
+      "Review my CV 📄",
+    ],
+  },
+];
+
+/** Suggestions tailored to the page the student is currently on. */
+export function suggestionsForPath(path: string): string[] {
+  const hit = PAGE_SUGGESTIONS.find((p) => path.startsWith(p.match));
+  return hit ? hit.questions : DEFAULT_SUGGESTIONS;
+}
+
 export function welcomeMessage(firstName?: string) {
   const who = firstName ? ` ${firstName}` : "";
   return `Hi${who}! I'm your Interns AI assistant 🤖 I can help you find internships, polish your CV and prep for interviews. What would you like help with?`;
