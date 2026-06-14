@@ -1028,6 +1028,60 @@ export const studentFaqs = [
   },
 ] as const;
 
+export const employerFaqs = [
+  {
+    q: "How do I post an internship?",
+    a: "Create an employer account, then use Post an internship. The wizard walks you through role details, requirements, screening questions and a preview before you publish.",
+  },
+  {
+    q: "Can I edit or close a listing after it goes live?",
+    a: "Yes. Manage every listing from your dashboard — pause, close or edit at any time. Closing stops new applications immediately while keeping existing applicants visible.",
+  },
+  {
+    q: "How do I manage applicants?",
+    a: "Each listing has an applicant view where you can review profiles, résumés and screening answers, and move candidates through your pipeline.",
+  },
+  {
+    q: "Do you verify employers?",
+    a: "Verified employers display a badge. We review company details and act on reports to keep the marketplace safe for students.",
+  },
+  {
+    q: "What does it cost to hire?",
+    a: "You can start free. Paid plans add featured placement, more active listings and candidate insights — see Pricing for the full comparison.",
+  },
+  {
+    q: "Can I post unpaid or credit-bearing internships?",
+    a: "Yes, but pay status must be disclosed clearly. Unpaid roles require confirmation and should meet your legal obligations.",
+  },
+] as const;
+
+export const pricingFaqs = [
+  {
+    q: "Is Interns Store free?",
+    a: "The core platform is always free for students. Plus and Pro plans add extras like the AI career assistant and profile boosts. Employers can start free and upgrade for more reach.",
+  },
+  {
+    q: "Can I change or cancel my plan?",
+    a: "Yes. Manage your plan from Billing at any time. Cancelling keeps your plan active until the end of the current period, then reverts to Free. See our Cancellation policy.",
+  },
+  {
+    q: "How do refunds work?",
+    a: "Duplicate charges and failed publishing are refundable. Featured placement is generally non-refundable once live, except where required by Australian Consumer Law. See our Refund policy.",
+  },
+  {
+    q: "Is GST included?",
+    a: "Prices include GST where applicable. Employer invoices show a GST breakdown and your ABN so you can claim it back.",
+  },
+  {
+    q: "What payment methods are accepted?",
+    a: "Visa, Mastercard and Amex. Card details are validated client-side in this demo — no real charge is made.",
+  },
+  {
+    q: "Do students need a paid plan to apply?",
+    a: "No. Searching, saving and applying are free. Paid student plans only add visibility and career tools like the AI assistant.",
+  },
+] as const;
+
 export const posts = [
   {
     slug: "first-internship-cv",
