@@ -6,8 +6,9 @@ import { Check, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import NumberFlow from "@number-flow/react";
 import { useApp } from "@/lib/store";
-import { plans, studentPlans, studentFeatures, employerFeatures } from "@/lib/data";
+import { plans, studentPlans, studentFeatures, employerFeatures, pricingFaqs } from "@/lib/data";
 import { Bot } from "lucide-react";
+import { Accordion } from "@/components/ui/Accordion";
 import { cn } from "@/lib/utils";
 
 function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: boolean) => void }) {
@@ -454,6 +455,19 @@ export function PricingClient() {
           </section>
         </>
       )}
+
+      {/* Shared pricing FAQ */}
+      <section className="section-pad bg-white">
+        <div className="container-shell max-w-3xl">
+          <div className="text-center">
+            <span className="eyebrow justify-center">Pricing FAQ</span>
+            <h2 className="section-title mt-5 text-navy-950">Billing questions, answered.</h2>
+          </div>
+          <div className="mt-10">
+            <Accordion items={[...pricingFaqs]} />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

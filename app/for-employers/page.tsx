@@ -13,9 +13,10 @@ import {
 } from "lucide-react";
 import { PageHero } from "@/components/shared/PageHero";
 import { CTASection } from "@/components/shared/CTASection";
+import { Accordion } from "@/components/ui/Accordion";
 import { Button } from "@/components/ui/Button";
 import { MotionSection, StaggerGrid, StaggerItem } from "@/components/ui/MotionSection";
-import { plans } from "@/lib/data";
+import { employerFaqs, plans } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "For Employers",
@@ -113,6 +114,15 @@ export default function EmployersPage() {
                 <Button href="/pricing" variant={plan.featured ? "primary" : "secondary"} className="mt-9 w-full">Choose {plan.name}</Button>
               </div>
             ))}
+          </div>
+        </div>
+      </MotionSection>
+
+      <MotionSection className="section-pad bg-surface">
+        <div className="container-shell">
+          <div><span className="eyebrow">Employer FAQ</span><h2 className="section-title mt-5 text-navy-950">Hiring questions, answered.</h2></div>
+          <div className="mt-10">
+            <Accordion items={[...employerFaqs]} />
           </div>
         </div>
       </MotionSection>
