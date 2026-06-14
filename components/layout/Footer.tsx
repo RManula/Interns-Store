@@ -1,15 +1,7 @@
 import Link from "next/link";
-import {
-  ArrowRight,
-  BriefcaseBusiness,
-  Camera,
-  MessageCircle,
-  Network,
-  Play,
-} from "lucide-react";
+import { ArrowRight, BriefcaseBusiness } from "lucide-react";
 import { site, social } from "@/lib/siteConfig";
-
-const icons = [Camera, MessageCircle, Network, Play];
+import { socialIconMap } from "@/components/layout/SocialIcons";
 
 const exploreLinks = [
   { label: "Browse internships", href: "/browse" },
@@ -58,16 +50,18 @@ export function Footer() {
               and the people ready to create them.
             </p>
             <div className="mt-6 flex gap-2">
-              {social.map((item, index) => {
-                const Icon = icons[index];
+              {social.map((item) => {
+                const Icon = socialIconMap[item.label as keyof typeof socialIconMap];
                 return (
                   <a
                     key={item.label}
                     href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     aria-label={item.label}
                     className="grid size-10 place-items-center rounded-full border border-white/12 text-white/70 transition hover:-translate-y-1 hover:border-blue-500 hover:bg-blue-600 hover:text-white"
                   >
-                    <Icon size={17} />
+                    {Icon ? <Icon className="size-[17px]" /> : null}
                   </a>
                 );
               })}
