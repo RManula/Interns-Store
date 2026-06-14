@@ -6,7 +6,8 @@ import { Check, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import NumberFlow from "@number-flow/react";
 import { useApp } from "@/lib/store";
-import { plans, studentPlans, employerFeatures } from "@/lib/data";
+import { plans, studentPlans, studentFeatures, employerFeatures } from "@/lib/data";
+import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 function BillingToggle({ yearly, onChange }: { yearly: boolean; onChange: (v: boolean) => void }) {
@@ -240,6 +241,7 @@ export function PricingClient() {
 
       {/* ── STUDENT PLANS ─────────────────────────────────────────────── */}
       {tab === "students" && (
+        <>
         <section
           id="students"
           className="section-pad"
@@ -282,8 +284,73 @@ export function PricingClient() {
               All student plans include a 7-day free trial. Cancel any time from your{" "}
               <Link href="/billing" className="font-semibold text-blue-400 hover:underline">billing settings</Link>.
             </p>
+
+            {/* AI bot subtle callout */}
+            <div className="mt-10 flex items-start gap-4 rounded-2xl border border-navy-800 bg-navy-900/50 p-5">
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-blue-600/20 text-blue-400">
+                <Bot size={20} />
+              </span>
+              <div>
+                <p className="text-sm font-semibold text-white/80">AI Career Bot — included in Plus &amp; Pro</p>
+                <p className="mt-1 text-xs leading-5 text-white/45">
+                  Paid plans unlock your personal AI assistant that helps you find internships, review your CV,
+                  prepare for interviews, and answer career questions — available 24/7 in the bottom corner of every page.
+                </p>
+              </div>
+            </div>
           </div>
         </section>
+
+        {/* Student feature comparison table */}
+        <section className="section-pad bg-surface">
+          <div className="container-shell">
+            <h2 className="mb-2 text-center font-heading text-2xl font-semibold text-navy-950">Compare student plans</h2>
+            <p className="mb-8 text-center text-sm text-muted">Everything you get at each tier, side by side.</p>
+            <div className="overflow-x-auto rounded-2xl border border-line">
+              <table className="w-full min-w-[560px] text-sm">
+                <thead>
+                  <tr className="border-b border-line bg-navy-950 text-white">
+                    <th className="w-1/2 px-6 py-4 text-left font-semibold">Feature</th>
+                    {studentPlans.map((p) => (
+                      <th key={p.name} className={cn("px-4 py-4 text-center font-semibold", p.featured && "bg-blue-700/30")}>
+                        {p.name}
+                        <span className="ms-1.5 text-xs font-normal text-white/50">{p.price}</span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {studentFeatures.map((section) => (
+                    <>
+                      <tr key={section.category} className="border-b border-line bg-blue-50/60">
+                        <td colSpan={4} className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-widest text-navy-700">
+                          {section.category}
+                        </td>
+                      </tr>
+                      {section.rows.map((row) => (
+                        <tr key={row.label} className="border-b border-line last:border-0 hover:bg-blue-50/30">
+                          <td className="px-6 py-3.5 font-medium text-navy-900">{row.label}</td>
+                          {row.values.map((val, i) => (
+                            <td key={i} className={cn("px-4 py-3.5 text-center", studentPlans[i]?.featured && "bg-blue-50/40")}>
+                              {val === true ? (
+                                <Check size={17} className="mx-auto text-mint-500" />
+                              ) : val === false ? (
+                                <X size={15} className="mx-auto text-red-400" />
+                              ) : (
+                                <span className="text-xs font-semibold text-navy-950">{val}</span>
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+        </>
       )}
 
       {/* ── EMPLOYER PLANS ────────────────────────────────────────────── */}
