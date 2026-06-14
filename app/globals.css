@@ -206,6 +206,20 @@ textarea {
   .container-shell {
     width: min(100% - 1.25rem, 1180px);
   }
+
+  /* Tighter vertical rhythm so sections don't feel spread out on phones */
+  .section-pad {
+    padding-block: clamp(2.75rem, 11vw, 4rem);
+  }
+
+  .display-title {
+    font-size: clamp(2.1rem, 9vw, 3rem);
+    line-height: 1.05;
+  }
+
+  .section-title {
+    font-size: clamp(1.65rem, 7.5vw, 2.4rem);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
