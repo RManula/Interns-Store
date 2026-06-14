@@ -471,6 +471,9 @@ export function FloatingAIBot() {
                 <Send size={17} />
               </button>
             </form>
+            <p className="bg-white pb-2 text-center text-[0.6rem] text-muted">
+              Powered by Interns AI · responses are simulated for this demo
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
