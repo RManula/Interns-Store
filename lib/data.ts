@@ -846,6 +846,7 @@ export const studentPlans = [
       "Monthly résumé review",
       "Early access to new listings",
       "Priority email support",
+      "AI Career Bot — basic queries",
     ],
     featured: true,
     badge: "Most popular" as string | null,
@@ -866,11 +867,52 @@ export const studentPlans = [
       "Direct message employers",
       "Monthly career coaching session",
       "Dedicated career advisor",
+      "AI Career Bot — unlimited + priority",
     ],
     featured: false,
-    badge: null as string | null,
+    badge: "AI Included" as string | null,
     ctaLabel: "Start Pro",
     ctaHref: "/checkout/student?plan=Pro",
+  },
+];
+
+export const studentFeatures = [
+  {
+    category: "Search & Discovery",
+    rows: [
+      { label: "Browse all internships", values: [true, true, true] },
+      { label: "Advanced search filters", values: [false, true, true] },
+      { label: "AI Smart Match recommendations", values: [false, true, true] },
+      { label: "Early access to new listings", values: [false, true, true] },
+    ],
+  },
+  {
+    category: "Profile & Applications",
+    rows: [
+      { label: "Student profile", values: [true, true, true] },
+      { label: "Save internships", values: ["Up to 5", "Unlimited", "Unlimited"] },
+      { label: "Application tracker", values: ["Basic", "Full", "Full + Analytics"] },
+      { label: "Featured profile (2× employer views)", values: [false, true, true] },
+      { label: "Direct message employers", values: [false, false, true] },
+    ],
+  },
+  {
+    category: "AI Career Bot",
+    rows: [
+      { label: "AI career chatbot", values: [false, "Basic queries", "Unlimited + priority"] },
+      { label: "Personalised internship recommendations", values: [false, true, true] },
+      { label: "Interview preparation with AI", values: [false, false, true] },
+      { label: "CV feedback via AI", values: [false, false, true] },
+    ],
+  },
+  {
+    category: "Career Support",
+    rows: [
+      { label: "Résumé review", values: [false, "Monthly", "Unlimited"] },
+      { label: "Career coaching session", values: [false, false, "Monthly"] },
+      { label: "Dedicated career advisor", values: [false, false, true] },
+      { label: "Priority email support", values: [false, true, true] },
+    ],
   },
 ];
 
