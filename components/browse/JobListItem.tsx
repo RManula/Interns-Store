@@ -3,6 +3,8 @@
 import { Banknote, Bookmark, Clock3, MapPin } from "lucide-react";
 import type { Internship } from "@/lib/types";
 import { useApp } from "@/lib/store";
+import { getCompany } from "@/lib/data";
+import { CompanyLogo } from "@/components/shared/CompanyLogo";
 import { cn, postedLabel } from "@/lib/utils";
 
 type JobListItemProps = {
@@ -42,12 +44,12 @@ export function JobListItem({ internship, selected, onSelect, onSave }: JobListI
       )}
     >
       <div className="flex items-start gap-3">
-        <span
-          className="grid size-11 shrink-0 place-items-center rounded-xl text-base font-extrabold text-white"
-          style={{ backgroundColor: internship.color }}
-        >
-          {internship.company.charAt(0)}
-        </span>
+        <CompanyLogo
+          logo={getCompany(internship.companyId)?.logo}
+          name={internship.company}
+          color={internship.color}
+          size={44}
+        />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h3 className="truncate font-heading text-lg font-semibold text-navy-950 group-hover:text-blue-700">

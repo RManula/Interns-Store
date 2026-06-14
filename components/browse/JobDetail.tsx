@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import type { Company, Internship } from "@/lib/types";
 import { useApp } from "@/lib/store";
+import { getCompany } from "@/lib/data";
+import { CompanyLogo } from "@/components/shared/CompanyLogo";
 import { cn, postedLabel } from "@/lib/utils";
 
 type JobDetailProps = {
@@ -85,12 +87,13 @@ export function JobDetail({ internship, company, variant = "page" }: JobDetailPr
 
       <div className={cn("rounded-b-[1.4rem] border border-t-0 border-line bg-white p-6 md:p-8")}>
         <div className="flex items-start gap-4">
-          <span
-            className="grid size-14 shrink-0 place-items-center rounded-2xl text-xl font-extrabold text-white"
-            style={{ backgroundColor: internship.color }}
-          >
-            {internship.company.charAt(0)}
-          </span>
+          <CompanyLogo
+            logo={company?.logo ?? getCompany(internship.companyId)?.logo}
+            name={internship.company}
+            color={internship.color}
+            size={56}
+            className="rounded-2xl"
+          />
           <div className="min-w-0">
             <h1
               className={cn(
@@ -236,12 +239,7 @@ export function JobDetail({ internship, company, variant = "page" }: JobDetailPr
         {company && (
           <div className="mt-6 rounded-2xl border border-line p-5">
             <div className="flex items-center gap-3">
-              <span
-                className="grid size-11 place-items-center rounded-xl text-base font-extrabold text-white"
-                style={{ backgroundColor: company.color }}
-              >
-                {company.name.charAt(0)}
-              </span>
+              <CompanyLogo logo={company.logo} name={company.name} color={company.color} size={44} />
               <div>
                 <p className="flex items-center gap-1.5 font-heading text-base font-semibold text-navy-950">
                   {company.name}

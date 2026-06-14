@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, BadgeCheck, Briefcase, Building2 } from "lucide-react";
 import { companies, internships } from "@/lib/data";
+import { CompanyLogo } from "@/components/shared/CompanyLogo";
 
 export const metadata: Metadata = {
   title: "Companies — Interns Store",
@@ -40,9 +41,7 @@ export default function CompaniesPage() {
                   className="group flex flex-col rounded-2xl border border-line bg-white p-6 transition hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[var(--shadow-sm)]"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="grid size-12 shrink-0 place-items-center rounded-xl text-lg font-extrabold text-white" style={{ backgroundColor: c.color }}>
-                      {c.name.charAt(0)}
-                    </span>
+                    <CompanyLogo logo={c.logo} name={c.name} color={c.color} size={48} />
                     <div className="min-w-0">
                       <h2 className="flex items-center gap-1.5 truncate font-heading text-base font-semibold text-navy-950 group-hover:text-blue-700">
                         {c.name}

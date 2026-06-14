@@ -178,7 +178,7 @@ function seedAccounts(): Account[] {
     },
     {
       password: "password",
-      savedJobs: ["product-design-intern", "software-engineering-intern"],
+      savedJobs: ["atlassian-software-engineering-intern", "google-ux-design-intern"],
       applications: [],
       activePlan: "Pro",
       paymentMethod: { type: "Mastercard", last4: "5678", expiry: "09/27" },

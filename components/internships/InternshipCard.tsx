@@ -4,11 +4,14 @@ import Link from "next/link";
 import { Heart, MapPin, Compass } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { getCompany } from "@/lib/data";
+import { CompanyLogo } from "@/components/shared/CompanyLogo";
 
 type Internship = {
   id: string;
   role: string;
   company: string;
+  companyId: string;
   location: string;
   mode: string;
   duration: string;
@@ -29,12 +32,13 @@ export function InternshipCard({ internship }: { internship: Internship }) {
   return (
     <article className="soft-card group relative flex h-full min-h-[370px] flex-col p-6 transition duration-300 hover:-translate-y-1.5 hover:border-blue-500/30 hover:shadow-[var(--shadow-md)]">
       <div className="flex items-start justify-between">
-        <span
-          className="grid size-12 place-items-center rounded-2xl text-lg font-extrabold text-white"
-          style={{ backgroundColor: internship.color }}
-        >
-          {internship.company.charAt(0)}
-        </span>
+        <CompanyLogo
+          logo={getCompany(internship.companyId)?.logo}
+          name={internship.company}
+          color={internship.color}
+          size={48}
+          className="rounded-2xl"
+        />
         <button
           type="button"
           aria-label={saved ? `Remove ${internship.role} from saved internships` : `Save ${internship.role}`}
