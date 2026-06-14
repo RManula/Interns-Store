@@ -53,6 +53,9 @@
 html {
   scroll-behavior: smooth;
   background: var(--white);
+  /* Force light rendering of native controls so OS dark mode doesn't
+     invert inputs, selects and scrollbars into an uncomfortable state. */
+  color-scheme: light;
 }
 
 body {
