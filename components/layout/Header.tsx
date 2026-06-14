@@ -243,6 +243,13 @@ export function Header() {
                         </span>
                       </div>
                       <Link
+                        href="/profile"
+                        onClick={() => setActiveMenu(null)}
+                        className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-navy-900 hover:bg-blue-50"
+                      >
+                        <User size={16} className="text-blue-600" /> My profile
+                      </Link>
+                      <Link
                         href="/dashboard"
                         onClick={() => setActiveMenu(null)}
                         className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-semibold text-navy-900 hover:bg-blue-50"
