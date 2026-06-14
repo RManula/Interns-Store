@@ -11,6 +11,11 @@ const HeroScene = dynamic(() => import("./HeroScene"), {
   loading: () => <div className="h-[430px] animate-pulse rounded-[2rem] bg-white/5" />,
 });
 
+const MeshBg = dynamic(
+  () => import("@paper-design/shaders-react").then((m) => ({ default: m.MeshGradient })),
+  { ssr: false },
+);
+
 export function HomeHero() {
   const reduce = useReducedMotion();
   const { scrollY } = useScroll();
@@ -19,8 +24,13 @@ export function HomeHero() {
 
   return (
     <section className="relative z-20 text-white">
-      <div className="noise mesh-dark relative min-h-[850px] overflow-hidden pb-24 pt-32 lg:min-h-[920px] lg:pt-40">
-        <div className="absolute inset-0 grid-pattern opacity-20" />
+      <div className="noise relative min-h-[850px] overflow-hidden pb-24 pt-32 lg:min-h-[920px] lg:pt-40" style={{ background: "linear-gradient(145deg, #061329 0%, #0b1f46 48%, #102f68 100%)" }}>
+        <MeshBg
+          className="absolute inset-0 h-full w-full opacity-80"
+          colors={["#07152f", "#0b1f46", "#246bfe", "#ff6b4a", "#11336f"]}
+          speed={0.18}
+        />
+        <div className="absolute inset-0 grid-pattern opacity-15" />
         <motion.div style={{ y, opacity }} className="container-shell relative z-10">
           <div className="grid items-center gap-5 lg:grid-cols-[1.08fr_.92fr]">
             <div className="relative z-10">
