@@ -1,69 +1,107 @@
 # Interns Store
 
-An Australian, internships-only marketplace — a two-sided platform where university students and
-recent graduates **find internships for free**, and employers **pay to post** them (subscription
-plans + premium listings). Built for NIT3274 — Small IT Business (Victoria University, Brisbane).
+Interns Store is an Australian student-first internship marketplace built for finding, comparing, and tracking early-career opportunities.
 
-> **Status:** 🏗️ In active development. This repository is the live working copy of the website —
-> pull it to see the latest build and deploy it to preview the result.
+This website is a class assignment and is not intended for commercial use.
 
----
+## Features
 
-## 🔗 Quick links
+- Responsive internship marketplace homepage
+- Search by role, company, location, remote work, and study field
+- Live autocomplete and accessible custom dropdowns
+- Internship listing and detail pages
+- Saveable internship cards
+- Student and employer landing pages
+- Employer pricing and internship submission pages
+- Animated cinematic placement section
+- Responsive navigation with desktop dropdowns and mobile accordions
+- Newsletter and contact forms
+- Accessible keyboard navigation and reduced-motion support
 
-| | |
-|---|---|
-| **Live demo** | _to be added once deployed_ |
-| **Team ideas board** | [`ideas/`](ideas/) — add your features & suggestions here |
-| **Section specs** | [`docs/`](docs/) — the per-member task PDFs |
+## Technology
 
----
+- Next.js 16 with App Router
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- shadcn-compatible component structure
+- Framer Motion
+- GSAP and ScrollTrigger
+- React Three Fiber and Drei
+- Lucide React icons
 
-## How we work together
+## Local Development
 
-- **Manula** edits and builds the website (the code in this repo).
-- **Everyone** pulls the repo to see the latest progress, and can **deploy it to preview live**.
-- **Everyone adds ideas** for their section in [`ideas/`](ideas/) — features, suggestions, and
-  how they think it should be built. Nothing is too small; the idea files are yours to fill.
+Requirements:
 
-### Sections & owners
+- Node.js 20 or later
+- npm
 
-| Section | Owner | Scope |
-|---|---|---|
-| Design & Front-of-House | **Manula** (Member 1) | Home, For Students, For Employers, About, Blog, site-wide UX |
-| Internships & Search | Member 2 | Browse, internship detail, apply flow, company profile |
-| Accounts & E-commerce | Member 3 | Dashboards, listing builder, AI assistant, cart → checkout → invoice |
-| Marketing, Compliance & Presentation | Member 4 | Marketing/SEO, social, Contact, footer/compliance, QA, slides, report |
-
----
-
-## 💡 Add your ideas (please do!)
-
-Head to the [`ideas/`](ideas/) folder. There's a file for each section, each with a simple
-template. Two ways to contribute:
-
-1. **Easiest:** open your section's file on GitHub, click the ✏️ edit button, paste a new idea
-   using the template, and commit.
-2. **Cleaner for big changes:** create a branch, add your ideas, and open a pull request.
-
-Use the priority tags so we know what's essential vs. nice-to-have:
-**MUST** (needed for marks) · **REAL** (buildable now) · **ASPIR** (stretch goal).
-
----
-
-## Getting the project locally
+Install dependencies and start the development server:
 
 ```bash
-git clone <this-repo-url>
-cd Interns-Store
-# run / deploy instructions will be added here as the build takes shape
+npm install
+npm run dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000).
 
-## Project info
+## Available Commands
 
-- **Unit:** NIT3274 — Small IT Business (BR, SY · Victoria University, Brisbane)
-- **Brand:** blue & white — modern, simple, professional, trustworthy. Mobile-first.
+```bash
+npm run dev
+npm run lint
+npm run build
+npm run start
+```
 
-> This project is a university class assignment and not for commercial purposes.
+Run `npm run lint` and `npm run build` before publishing changes.
+
+## Main Routes
+
+| Route | Purpose |
+| --- | --- |
+| `/` | Homepage, internship search, features, pricing, and testimonials |
+| `/browse` | Searchable internship listings |
+| `/internships/[id]` | Individual internship details |
+| `/for-students` | Student tools and application workflow |
+| `/for-employers` | Employer benefits and hiring workflow |
+| `/post` | Employer internship submission form |
+| `/pricing` | Employer listing and subscription plans |
+| `/register` | Registration |
+| `/about` | Company information |
+| `/blog` | Internship guides and articles |
+| `/contact` | Contact information and form |
+| `/privacy` | Privacy and safety information |
+
+## Project Structure
+
+```text
+app/                  Next.js routes, layouts, metadata, and global styles
+components/home/      Homepage hero, search, and newsletter components
+components/internships/ Reusable internship listing components
+components/layout/    Header, footer, and scroll progress
+components/shared/    Shared page heroes and calls to action
+components/ui/        Reusable UI and animation components
+components/employers/ Employer forms
+lib/                  Site configuration, content data, and utilities
+public/               Static public assets
+```
+
+## Deployment
+
+The recommended deployment platform is Vercel:
+
+1. Push this project to a GitHub repository.
+2. Sign in to [Vercel](https://vercel.com) with GitHub.
+3. Import the repository.
+4. Keep the detected framework as Next.js.
+5. Select **Deploy**.
+
+Vercel will create a public URL and redeploy automatically whenever changes are pushed to the production branch.
+
+## Important Notice
+
+The business details, listings, testimonials, pricing, and contact information in this project are demonstration content.
+
+**This website/app is for a class assignment and not for commercial purposes.**

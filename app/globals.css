@@ -1,0 +1,224 @@
+@import "tailwindcss";
+
+:root {
+  --navy-950: #07152f;
+  --navy-900: #0b1f46;
+  --navy-800: #11336f;
+  --blue-700: #174fcf;
+  --blue-600: #246bfe;
+  --blue-500: #4387ff;
+  --blue-100: #dfeaff;
+  --blue-50: #f2f7ff;
+  --coral-500: #ff6b4a;
+  --coral-600: #ed5132;
+  --mint-500: #22c7a9;
+  --ink: #13233f;
+  --muted: #60708f;
+  --line: #dce5f4;
+  --surface: #f7faff;
+  --white: #ffffff;
+  --radius-sm: 0.75rem;
+  --radius-md: 1.15rem;
+  --radius-lg: 1.75rem;
+  --radius-xl: 2.5rem;
+  --shadow-sm: 0 10px 35px rgba(15, 42, 91, 0.08);
+  --shadow-md: 0 22px 70px rgba(15, 42, 91, 0.14);
+  --shadow-glow: 0 18px 65px rgba(36, 107, 254, 0.24);
+}
+
+@theme inline {
+  --color-navy-950: var(--navy-950);
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-blue-700: var(--blue-700);
+  --color-blue-600: var(--blue-600);
+  --color-blue-500: var(--blue-500);
+  --color-blue-100: var(--blue-100);
+  --color-blue-50: var(--blue-50);
+  --color-coral-500: var(--coral-500);
+  --color-coral-600: var(--coral-600);
+  --color-mint-500: var(--mint-500);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-surface: var(--surface);
+  --font-sans: var(--font-open-sans);
+  --font-heading: var(--font-poppins);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--white);
+}
+
+body {
+  margin: 0;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-open-sans), Arial, sans-serif;
+  text-rendering: optimizeLegibility;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-poppins), var(--font-open-sans), sans-serif;
+  letter-spacing: -0.035em;
+}
+
+a,
+button,
+input,
+select,
+textarea {
+  outline-color: var(--blue-600);
+  outline-offset: 3px;
+}
+
+::selection {
+  background: var(--blue-100);
+  color: var(--navy-950);
+}
+
+.container-shell {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.section-pad {
+  padding-block: clamp(4.5rem, 9vw, 8.5rem);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--blue-700);
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.eyebrow::before {
+  width: 1.5rem;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  content: "";
+}
+
+.display-title {
+  font-size: clamp(2.35rem, 6vw, 5.6rem);
+  font-weight: 700;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 3.55rem);
+  font-weight: 700;
+  line-height: 1.06;
+  text-wrap: balance;
+}
+
+.body-lg {
+  font-size: clamp(1rem, 1.5vw, 1.18rem);
+  line-height: 1.8;
+}
+
+.text-gradient {
+  background: linear-gradient(115deg, #62a0ff 5%, #ffffff 50%, #ffad91 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.blue-text-gradient {
+  background: linear-gradient(120deg, #174fcf, #4387ff 60%, #22c7a9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.mesh-dark {
+  background:
+    radial-gradient(circle at 12% 8%, rgba(67, 135, 255, 0.32), transparent 33%),
+    radial-gradient(circle at 84% 25%, rgba(255, 107, 74, 0.2), transparent 26%),
+    radial-gradient(circle at 68% 88%, rgba(34, 199, 169, 0.12), transparent 30%),
+    linear-gradient(145deg, #061329 0%, #0b1f46 48%, #102f68 100%);
+}
+
+.mesh-light {
+  background:
+    radial-gradient(circle at 10% 15%, rgba(67, 135, 255, 0.12), transparent 28%),
+    radial-gradient(circle at 88% 75%, rgba(255, 107, 74, 0.1), transparent 25%),
+    linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+}
+
+.noise::after {
+  position: absolute;
+  inset: 0;
+  opacity: 0.045;
+  pointer-events: none;
+  content: "";
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E");
+}
+
+.glass {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(18px);
+}
+
+.soft-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.grid-pattern {
+  background-image:
+    linear-gradient(rgba(36, 107, 254, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(36, 107, 254, 0.06) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+.marquee-track {
+  animation: marquee 26s linear infinite;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 640px) {
+  .container-shell {
+    width: min(100% - 1.25rem, 1180px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
