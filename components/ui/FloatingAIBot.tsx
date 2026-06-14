@@ -4,23 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Send, Sparkles, X } from "lucide-react";
 import { useApp } from "@/lib/store";
+import { DEFAULT_SUGGESTIONS as SUGGESTIONS, getReply, TEASERS, welcomeMessage } from "@/lib/botKnowledge";
 
 type Mood = "normal" | "happy";
 type ChatMessage = { id: number; role: "bot" | "user"; text: string };
 
-const SUGGESTIONS = [
-  "Find internships for my degree 🎓",
-  "Review my CV 📄",
-  "Help me prep for an interview 💬",
-  "Show me remote internships 🌏",
-  "Paid vs credit internships?",
-];
-
-const BOT_REPLY =
-  "Great question! In the full version I'll search live internships and give you a tailored answer. For now, head to Browse and try filters that match your profile — I'll be right here if you need me 🚀";
-
-const WELCOME =
-  "Hi! I'm your Interns AI assistant 🤖 I can help you find internships, polish your CV and prep for interviews. What would you like help with?";
+const WELCOME = welcomeMessage();
 
 /* ──────────────────────────────────────────────────────────────────────────
    BotCharacter — a hand-built SVG recreation of the Rakata 3D assistant bot.
@@ -191,12 +180,6 @@ function BotCharacter({
   );
 }
 
-const TEASERS = [
-  "Need help finding an internship? 🎯",
-  "Hi! I'm here whenever you're ready 👋",
-  "Want me to review your CV? 📄",
-  "Ask me anything about internships!",
-];
 
 export function FloatingAIBot() {
   const { user, activePlan } = useApp();
@@ -224,7 +207,7 @@ export function FloatingAIBot() {
     });
     setDraft("");
     setTimeout(() => {
-      setMessages((prev) => [...prev, { id: prev.length, role: "bot", text: BOT_REPLY }]);
+      setMessages((prev) => [...prev, { id: prev.length, role: "bot", text: getReply(value) }]);
     }, 650);
   };
 
