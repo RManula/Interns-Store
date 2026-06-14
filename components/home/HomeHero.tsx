@@ -4,11 +4,7 @@ import dynamic from "next/dynamic";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Briefcase, GraduationCap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-
-const HeroScene = dynamic(() => import("./HeroScene"), {
-  ssr: false,
-  loading: () => <div className="h-[430px] animate-pulse rounded-[2rem] bg-white/5" />,
-});
+import { HeroVisual } from "./HeroVisual";
 
 const MeshBg = dynamic(
   () => import("@paper-design/shaders-react").then((m) => ({ default: m.MeshGradient })),
@@ -80,9 +76,8 @@ export function HomeHero() {
               </span>
             </div>
             </div>
-            <div className="relative -mx-6 min-h-[430px] lg:mx-0 lg:min-h-[570px]">
-              <div className="absolute left-1/2 top-1/2 h-[72%] w-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-500/20 blur-[90px]" />
-              <HeroScene />
+            <div className="relative">
+              <HeroVisual />
             </div>
           </div>
         </motion.div>
