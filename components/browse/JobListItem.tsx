@@ -16,10 +16,11 @@ export function JobListItem({ internship, selected, onSelect, onSave }: JobListI
   const { isSaved } = useApp();
   const saved = isSaved(internship.id);
 
+  const isJustPosted = internship.postedDaysAgo <= 1;
   const badges = [
     internship.friendly && "First internship friendly",
     internship.paid && "Paid",
-    internship.credit && "Credit",
+    internship.credit && "Credit eligible",
   ].filter(Boolean) as string[];
 
   return (
@@ -48,9 +49,16 @@ export function JobListItem({ internship, selected, onSelect, onSave }: JobListI
           {internship.company.charAt(0)}
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-heading text-lg font-semibold text-navy-950 group-hover:text-blue-700">
-            {internship.role}
-          </h3>
+          <div className="flex items-center gap-2">
+            <h3 className="truncate font-heading text-lg font-semibold text-navy-950 group-hover:text-blue-700">
+              {internship.role}
+            </h3>
+            {isJustPosted && (
+              <span className="shrink-0 rounded-full bg-coral-500 px-2 py-0.5 text-[0.58rem] font-extrabold uppercase text-white">
+                Just posted
+              </span>
+            )}
+          </div>
           <p className="text-sm font-semibold text-muted">{internship.company}</p>
         </div>
         <button
