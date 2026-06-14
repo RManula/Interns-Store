@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { Briefcase, GraduationCap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { HeroSearch } from "./HeroSearch";
 
 const HeroScene = dynamic(() => import("./HeroScene"), {
   ssr: false,
@@ -88,14 +87,6 @@ export function HomeHero() {
           </div>
         </motion.div>
       </div>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.75, delay: 0.45 }}
-        className="container-shell relative z-30 -mb-12 -mt-12"
-      >
-        <HeroSearch />
-      </motion.div>
     </section>
   );
 }
