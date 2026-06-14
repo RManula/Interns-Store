@@ -363,7 +363,7 @@ export function PricingClient() {
                                 {val === true ? (
                                   <Check size={17} className="mx-auto text-mint-500" />
                                 ) : val === false ? (
-                                  <X size={15} className="mx-auto text-muted opacity-40" />
+                                  <X size={15} className="mx-auto text-red-400" />
                                 ) : (
                                   <span className="font-semibold text-navy-950">{val}</span>
                                 )}
