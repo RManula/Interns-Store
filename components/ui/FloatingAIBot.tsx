@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Send, Sparkles, X } from "lucide-react";
+import { RotateCcw, Send, Sparkles, X } from "lucide-react";
 import { useApp } from "@/lib/store";
 import { DEFAULT_SUGGESTIONS as SUGGESTIONS, getReply, TEASERS, welcomeMessage } from "@/lib/botKnowledge";
 
@@ -233,6 +233,18 @@ export function FloatingAIBot() {
     }
   }, [chatKey, messages]);
 
+  const resetChat = () => {
+    setTyping(false);
+    setMessages([{ id: 0, role: "bot", text: WELCOME, ts: Date.now() }]);
+    if (chatKey) {
+      try {
+        window.localStorage.removeItem(chatKey);
+      } catch {
+        /* ignore */
+      }
+    }
+  };
+
   const send = (text: string) => {
     const value = text.trim();
     if (!value) return;
@@ -324,6 +336,15 @@ export function FloatingAIBot() {
                   <span className="inline-block size-1.5 rounded-full bg-mint-500" /> Career assistant · Online
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={resetChat}
+                className="grid size-8 place-items-center rounded-full text-white/70 transition hover:bg-white/15 hover:text-white"
+                aria-label="Reset conversation"
+                title="Reset conversation"
+              >
+                <RotateCcw size={15} />
+              </button>
               <button
                 type="button"
                 onClick={() => setOpen(false)}
