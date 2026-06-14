@@ -133,6 +133,9 @@ function StudentDashboard() {
             <Link href="/browse" className="flex items-center justify-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-sm font-bold text-white hover:bg-blue-700">
               <Rocket size={16} /> Find more internships
             </Link>
+            <Link href="/profile" className="flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-5 py-3 text-sm font-bold text-navy-900 hover:bg-blue-50">
+              <GraduationCap size={16} /> View &amp; edit profile
+            </Link>
             <Link href="/billing" className="flex items-center justify-center gap-2 rounded-2xl border border-line bg-white px-5 py-3 text-sm font-bold text-navy-900 hover:bg-blue-50">
               <FileText size={16} /> Billing & payments
             </Link>
