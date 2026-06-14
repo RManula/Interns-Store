@@ -210,18 +210,23 @@ export function FloatingAIBot() {
 
   const isPaid = user?.role === "student" && (activePlan === "Plus" || activePlan === "Pro");
   const chatKey = user ? `interns-store:chat:${user.id}` : null;
+  const firstName = user?.name?.split(" ")[0];
 
-  // restore saved conversation for this user
+  // restore saved conversation, or greet the student by name
   useEffect(() => {
     if (!chatKey) return;
     try {
       const raw = window.localStorage.getItem(chatKey);
       const parsed = raw ? (JSON.parse(raw) as ChatMessage[]) : null;
-      if (Array.isArray(parsed) && parsed.length) setMessages(parsed);
+      if (Array.isArray(parsed) && parsed.length) {
+        setMessages(parsed);
+        return;
+      }
     } catch {
       /* ignore corrupt history */
     }
-  }, [chatKey]);
+    setMessages([{ id: 0, role: "bot", text: welcomeMessage(firstName), ts: Date.now() }]);
+  }, [chatKey, firstName]);
 
   // persist conversation
   useEffect(() => {
@@ -235,7 +240,7 @@ export function FloatingAIBot() {
 
   const resetChat = () => {
     setTyping(false);
-    setMessages([{ id: 0, role: "bot", text: WELCOME, ts: Date.now() }]);
+    setMessages([{ id: 0, role: "bot", text: welcomeMessage(firstName), ts: Date.now() }]);
     if (chatKey) {
       try {
         window.localStorage.removeItem(chatKey);
