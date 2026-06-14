@@ -2,9 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { RotateCcw, Send, Sparkles, X } from "lucide-react";
 import { useApp } from "@/lib/store";
-import { DEFAULT_SUGGESTIONS as SUGGESTIONS, getReply, TEASERS, welcomeMessage } from "@/lib/botKnowledge";
+import { getReply, suggestionsForPath, TEASERS, welcomeMessage } from "@/lib/botKnowledge";
 
 type Mood = "normal" | "happy";
 type ChatMessage = { id: number; role: "bot" | "user"; text: string; ts?: number };
@@ -195,6 +196,8 @@ function BotCharacter({
 export function FloatingAIBot() {
   const { user, activePlan } = useApp();
   const reduce = useReducedMotion();
+  const pathname = usePathname();
+  const suggestions = suggestionsForPath(pathname ?? "/");
   const [dismissed, setDismissed] = useState(false);
   const [open, setOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
@@ -423,7 +426,7 @@ export function FloatingAIBot() {
                     <Sparkles size={12} className="text-blue-600" /> Popular questions
                   </p>
                   <div className="flex flex-col gap-2">
-                    {SUGGESTIONS.map((q) => (
+                    {suggestions.map((q) => (
                       <button
                         key={q}
                         type="button"
