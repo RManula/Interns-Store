@@ -1,55 +1,80 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Check, Clock3, GraduationCap, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/Button";
-import { internships } from "@/lib/data";
+import { ArrowLeft } from "lucide-react";
+import { JobDetail } from "@/components/browse/JobDetail";
+import { companies, getCompany, getInternship, internships } from "@/lib/data";
 
 export function generateStaticParams() {
   return internships.map((item) => ({ id: item.id }));
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
   const { id } = await params;
-  const internship = internships.find((item) => item.id === id);
+  const internship = getInternship(id);
   return { title: internship ? `${internship.role} at ${internship.company}` : "Internship" };
 }
 
 export default async function InternshipPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const internship = internships.find((item) => item.id === id);
+  const internship = getInternship(id);
   if (!internship) notFound();
+  const company = getCompany(internship.companyId);
+  const related = internships
+    .filter((item) => item.id !== internship.id && item.field === internship.field)
+    .slice(0, 3);
 
   return (
-    <>
-      <section className="mesh-dark pb-20 pt-36 text-white">
-        <div className="container-shell">
-          <span className="eyebrow !text-blue-100">{internship.company}</span>
-          <h1 className="display-title mt-5 max-w-4xl">{internship.role}</h1>
-          <div className="mt-7 flex flex-wrap gap-4 text-sm font-semibold text-white/70">
-            <span className="flex items-center gap-2"><MapPin size={17} />{internship.location}</span>
-            <span className="flex items-center gap-2"><Clock3 size={17} />{internship.mode} · {internship.duration}</span>
-            <span className="flex items-center gap-2"><GraduationCap size={17} />{internship.field}</span>
+    <div className="bg-surface pb-20 pt-24">
+      <div className="container-shell">
+        <Link
+          href="/browse"
+          className="inline-flex items-center gap-2 text-sm font-bold text-blue-700 hover:underline"
+        >
+          <ArrowLeft size={16} /> Back to browse
+        </Link>
+
+        <div className="mt-5 grid gap-8 lg:grid-cols-[1fr_340px]">
+          <div className="overflow-hidden rounded-[1.4rem] shadow-[0_24px_70px_rgba(7,21,47,.1)]">
+            <JobDetail internship={internship} company={company} variant="page" />
           </div>
-        </div>
-      </section>
-      <section className="section-pad bg-white">
-        <div className="container-shell grid gap-10 lg:grid-cols-[1fr_360px]">
-          <div>
-            <span className="eyebrow">The opportunity</span>
-            <h2 className="mt-5 text-3xl font-semibold text-navy-950">Build practical experience with meaningful work.</h2>
-            <p className="body-lg mt-5 text-muted">Join {internship.company} for a structured {internship.duration.toLowerCase()} placement. You will contribute to real projects, receive regular feedback and finish with evidence you can take into your next application.</p>
-            <h3 className="mt-10 text-xl font-semibold">What you can expect</h3>
-            <div className="mt-5 space-y-3">{["Clear learning outcomes and supervision", "Work suited to a first internship", "Regular feedback from an experienced teammate", "A practical project for your portfolio"].map((item) => <p key={item} className="flex items-center gap-3"><Check size={17} className="text-mint-500" />{item}</p>)}</div>
-          </div>
-          <aside className="soft-card h-fit p-7">
-            <p className="text-xs font-extrabold uppercase tracking-widest text-blue-600">Application</p>
-            <h2 className="mt-3 text-2xl font-semibold">Ready to take the next step?</h2>
-            <p className="mt-3 text-sm leading-6 text-muted">Create or update your student profile before applying.</p>
-            <Button href="/register" className="mt-7 w-full">Apply now</Button>
-            <Button href="/browse" variant="secondary" className="mt-3 w-full">Back to browse</Button>
+
+          <aside className="space-y-5">
+            <div className="rounded-2xl border border-line bg-white p-5">
+              <p className="text-xs font-extrabold uppercase tracking-widest text-blue-600">
+                Similar internships
+              </p>
+              {related.length > 0 ? (
+                <div className="mt-3 space-y-3">
+                  {related.map((item) => (
+                    <Link
+                      key={item.id}
+                      href={`/internships/${item.id}`}
+                      className="block rounded-xl border border-line p-3 transition hover:border-blue-500/40 hover:bg-blue-50/40"
+                    >
+                      <p className="font-heading text-sm font-semibold text-navy-950">{item.role}</p>
+                      <p className="text-xs text-muted">{item.company} · {item.location}</p>
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-3 text-sm text-muted">No similar roles right now.</p>
+              )}
+              <Link
+                href={`/browse?field=${encodeURIComponent(internship.field)}`}
+                className="mt-4 block text-sm font-bold text-blue-700 hover:underline"
+              >
+                See all {internship.field} internships →
+              </Link>
+            </div>
           </aside>
         </div>
-      </section>
-    </>
+      </div>
+      <p className="sr-only">{companies.length} companies hiring on Interns Store.</p>
+    </div>
   );
 }
