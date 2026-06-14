@@ -36,12 +36,13 @@ type MenuItem = {
 
 type NavItem =
   | { label: string; href: string }
-  | { label: string; items: MenuItem[] };
+  | { label: string; href: string; items: MenuItem[] };
 
 const navigation: NavItem[] = [
   { label: "Home", href: "/" },
   {
     label: "Students",
+    href: "/for-students",
     items: [
       { label: "Browse Internships", description: "Find roles built for students", href: "/browse", icon: Search },
       { label: "How It Works", description: "From application to offer", href: "/for-students", icon: BookOpen },
@@ -51,6 +52,7 @@ const navigation: NavItem[] = [
   },
   {
     label: "Employers",
+    href: "/for-employers",
     items: [
       { label: "Post an Internship", description: "Reach work-ready students", href: "/post", icon: Rocket },
       { label: "Pricing & Plans", description: "Subscriptions and listing fees", href: "/pricing", icon: Box },
@@ -58,18 +60,11 @@ const navigation: NavItem[] = [
       { label: "Why Interns Store", description: "Australia's internship-only marketplace", href: "/for-employers", icon: Globe2 },
     ],
   },
-  {
-    label: "Browse",
-    items: [
-      { label: "By Study Field", description: "Technology, Business, Design and more", href: "/browse?view=field", icon: GraduationCap },
-      { label: "By Location", description: "Brisbane, Sydney, Remote and more", href: "/browse?view=location", icon: MapPin },
-      { label: "Remote Internships", description: "Work from anywhere", href: "/browse?location=Remote", icon: Globe2 },
-      { label: "Newest Listings", description: "See what was just posted", href: "/browse?sort=newest", icon: Newspaper },
-    ],
-  },
+  { label: "Browse", href: "/browse" },
   { label: "Pricing", href: "/pricing" },
   {
     label: "Company",
+    href: "/about",
     items: [
       { label: "About", description: "Our mission and team", href: "/about", icon: User },
       { label: "Blog", description: "Tips, news and updates", href: "/blog", icon: FileText },
@@ -135,7 +130,7 @@ export function Header() {
 
         <nav className="hidden items-center gap-0.5 lg:flex" aria-label="Primary navigation">
           {navigation.map((item) => {
-            if ("href" in item) {
+            if (!("items" in item)) {
               const active = pathname === item.href;
               return (
                 <Link
@@ -163,8 +158,8 @@ export function Header() {
                 onMouseEnter={() => setActiveMenu(item.label)}
                 onMouseLeave={() => setActiveMenu(null)}
               >
-                <button
-                  type="button"
+                <Link
+                  href={item.href}
                   aria-expanded={open}
                   className={cn(
                     "flex items-center gap-1 whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-semibold transition",
@@ -172,11 +167,11 @@ export function Header() {
                       ? "text-navy-900 hover:bg-blue-50 hover:text-blue-700"
                       : "text-white/78 hover:bg-white/10 hover:text-white",
                   )}
-                  onClick={() => setActiveMenu(open ? null : item.label)}
+                  onClick={() => setActiveMenu(null)}
                 >
                   {item.label}
                   <ChevronDown size={15} className={cn("transition-transform", open && "rotate-180")} />
-                </button>
+                </Link>
                 <AnimatePresence>
                   {open && (
                     <motion.div
@@ -318,7 +313,7 @@ export function Header() {
             className="container-shell mt-3 max-h-[calc(100vh-6rem)] overflow-y-auto rounded-3xl border border-line bg-white p-3 shadow-2xl lg:hidden"
           >
             {navigation.map((item) =>
-              "href" in item ? (
+              !("items" in item) ? (
                 <Link
                   key={item.label}
                   href={item.href}
