@@ -153,7 +153,7 @@ export function CinematicHero({
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
-      if (window.scrollY > window.innerHeight * 3) return;
+      if (window.scrollY > window.innerHeight * 1.6) return;
       cancelAnimationFrame(requestRef.current);
       requestRef.current = requestAnimationFrame(() => {
         if (!mainCardRef.current || !mockupRef.current) return;
@@ -227,9 +227,9 @@ export function CinematicHero({
         scrollTrigger: {
           trigger: containerRef.current,
           start: "top top",
-          end: "+=3200",
+          end: "+=1500",
           pin: true,
-          scrub: 1,
+          scrub: 0.6,
           anticipatePin: 1,
           invalidateOnRefresh: true,
         },

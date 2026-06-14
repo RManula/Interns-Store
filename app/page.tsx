@@ -5,7 +5,6 @@ import {
   Check,
   FileText,
   GraduationCap,
-  HeartHandshake,
   ListChecks,
   MapPin,
   Search,
@@ -42,6 +41,8 @@ export default function Home() {
   return (
     <>
       <HomeHero />
+
+      <section aria-label="Student momentum and platform features"><CinematicHero /></section>
 
       <section className="relative z-10 border-y border-line bg-white py-8 pt-20">
         <div className="container-shell grid gap-6 text-center sm:grid-cols-3">
@@ -122,8 +123,6 @@ export default function Home() {
         </div>
       </MotionSection>
 
-      <section aria-label="Student momentum and platform features"><CinematicHero /></section>
-
       <MotionSection className="section-pad bg-white">
         <div className="container-shell">
           <div className="mx-auto max-w-3xl text-center"><span className="eyebrow">Customer feedback</span><h2 className="section-title mt-5 text-navy-950">First opportunities change everything.</h2></div>
@@ -156,15 +155,6 @@ export default function Home() {
         <div className="container-shell grid items-center gap-10 lg:grid-cols-2">
           <div><span className="eyebrow">The internship edit</span><h2 className="section-title mt-5 text-navy-950">New internships in your inbox.</h2><p className="body-lg mt-5 max-w-xl text-muted">Get new roles, application guidance and early-career hiring ideas each week.</p></div>
           <NewsletterSignup />
-        </div>
-      </MotionSection>
-
-      <MotionSection className="relative overflow-hidden bg-coral-500 py-24 text-center text-white">
-        <div className="container-shell relative">
-          <HeartHandshake className="mx-auto" size={38} />
-          <h2 className="section-title mx-auto mt-5 max-w-4xl">Ready to land your first internship?</h2>
-          <p className="mx-auto mt-5 max-w-2xl text-white/75">Explore student-first opportunities or meet the early-career talent ready to contribute.</p>
-          <div className="mt-9 flex flex-wrap justify-center gap-3"><Button href="/browse" variant="light">Find an Internship</Button><Button href="/post" variant="ghost">Post an Internship</Button></div>
         </div>
       </MotionSection>
     </>
