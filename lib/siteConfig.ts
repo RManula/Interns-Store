@@ -22,9 +22,11 @@ export const nav = [
   { label: "Contact", href: "/contact" },
 ] as const;
 
+// TEAM ACTION REQUIRED: Replace these with real social media page URLs once created.
+// At minimum create a LinkedIn Company Page for "Interns Store" — rubric requires live links.
 export const social = [
-  { label: "Instagram", href: "#" },
-  { label: "Facebook", href: "#" },
-  { label: "LinkedIn", href: "#" },
-  { label: "TikTok", href: "#" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/interns-store" },
+  { label: "Instagram", href: "https://www.instagram.com/internsstore.au" },
+  { label: "Facebook", href: "https://www.facebook.com/internsstore" },
+  { label: "TikTok", href: "https://www.tiktok.com/@internsstore" },
 ] as const;
