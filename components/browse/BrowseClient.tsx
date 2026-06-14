@@ -3,13 +3,18 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
+  BadgeCheck,
+  Banknote,
   ChevronDown,
   Clock,
   GraduationCap,
   MapPin,
   Search,
   SlidersHorizontal,
+  Sparkles,
+  Wifi,
   X,
+  Zap,
 } from "lucide-react";
 import type { Company, Internship, WorkMode, WorkType } from "@/lib/types";
 import { useApp } from "@/lib/store";
@@ -31,6 +36,7 @@ const SORTS = [
   { id: "relevance", label: "Relevance" },
   { id: "newest", label: "Newest first" },
   { id: "pay", label: "Highest pay" },
+  { id: "justposted", label: "Just posted" },
 ] as const;
 
 type SortId = (typeof SORTS)[number]["id"];
@@ -59,6 +65,7 @@ export function BrowseClient({
   const [creditOnly, setCreditOnly] = useState(false);
   const [friendlyOnly, setFriendlyOnly] = useState(false);
   const [sort, setSort] = useState<SortId>("relevance");
+  const [degreeLevel, setDegreeLevel] = useState("");
   const [selectedId, setSelectedId] = useState<string>("");
   const [isDesktop, setIsDesktop] = useState(true);
 
@@ -120,7 +127,7 @@ export function BrowseClient({
         matchesFriendly
       );
     });
-    if (sort === "newest") list.sort((a, b) => a.postedDaysAgo - b.postedDaysAgo);
+    if (sort === "newest" || sort === "justposted") list.sort((a, b) => a.postedDaysAgo - b.postedDaysAgo);
     if (sort === "pay") list.sort((a, b) => payValue(b.salary) - payValue(a.salary));
     return list;
   }, [allInternships, query, location, field, workTypes, modes, paidOnly, creditOnly, friendlyOnly, sort]);
@@ -136,7 +143,7 @@ export function BrowseClient({
 
   const selected = results.find((item) => item.id === selectedId) ?? results[0];
   const activeFilterCount =
-    workTypes.size + modes.size + (paidOnly ? 1 : 0) + (creditOnly ? 1 : 0) + (friendlyOnly ? 1 : 0);
+    workTypes.size + modes.size + (paidOnly ? 1 : 0) + (creditOnly ? 1 : 0) + (friendlyOnly ? 1 : 0) + (degreeLevel ? 1 : 0);
 
   const runSearch = () => {
     addRecentSearch({ q: query.trim(), location: location.trim(), field });
@@ -180,6 +187,8 @@ export function BrowseClient({
     setPaidOnly(false);
     setCreditOnly(false);
     setFriendlyOnly(false);
+    setDegreeLevel("");
+    setSort("relevance");
   };
 
   return (
@@ -218,8 +227,35 @@ export function BrowseClient({
               onClick={runSearch}
               className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-blue-600 px-7 text-sm font-extrabold text-white transition hover:bg-blue-700"
             >
-              <Search size={17} /> SEEK
+              <Search size={17} /> Search
             </button>
+          </div>
+
+          {/* Quick-filter chips — internship specific */}
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            <span className="text-xs font-bold uppercase tracking-wide text-white/45">Quick filters:</span>
+            {[
+              { label: "Just posted", icon: Zap, action: () => setSort("justposted"), active: sort === "justposted" },
+              { label: "Paid", icon: Banknote, action: () => setPaidOnly((v) => !v), active: paidOnly },
+              { label: "Remote", icon: Wifi, action: () => toggleSetItem(setModes, modes, "Remote"), active: modes.has("Remote") },
+              { label: "Credit eligible", icon: BadgeCheck, action: () => setCreditOnly((v) => !v), active: creditOnly },
+              { label: "Beginner friendly", icon: Sparkles, action: () => setFriendlyOnly((v) => !v), active: friendlyOnly },
+            ].map(({ label, icon: Icon, action, active }) => (
+              <button
+                key={label}
+                type="button"
+                onClick={action}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition",
+                  active
+                    ? "bg-blue-600 text-white"
+                    : "bg-white/10 text-white/80 hover:bg-white/20",
+                )}
+              >
+                <Icon size={12} />
+                {label}
+              </button>
+            ))}
           </div>
 
           {/* Recent searches */}
@@ -298,17 +334,30 @@ export function BrowseClient({
             </div>
           </FilterMenu>
 
-          <FilterMenu label="More filters" icon={SlidersHorizontal} active={paidOnly || creditOnly || friendlyOnly}>
-            <div className="w-56 p-1.5">
+          <FilterMenu label="More filters" icon={SlidersHorizontal} active={paidOnly || creditOnly || friendlyOnly || Boolean(degreeLevel)}>
+            <div className="w-64 p-1.5">
+              <p className="mb-1 px-3 pt-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-muted">Stipend</p>
               <CheckRow checked={paidOnly} onChange={() => setPaidOnly((v) => !v)}>
-                Paid only
+                Paid internships only
               </CheckRow>
+              <p className="mb-1 mt-2 px-3 pt-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-muted">Academic credit</p>
               <CheckRow checked={creditOnly} onChange={() => setCreditOnly((v) => !v)}>
                 Credit eligible
               </CheckRow>
+              <p className="mb-1 mt-2 px-3 pt-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-muted">Experience level</p>
               <CheckRow checked={friendlyOnly} onChange={() => setFriendlyOnly((v) => !v)}>
                 First internship friendly
               </CheckRow>
+              <p className="mb-1 mt-2 px-3 pt-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-muted">Degree level</p>
+              {[
+                { value: "", label: "Any level" },
+                { value: "undergrad", label: "Undergraduate" },
+                { value: "postgrad", label: "Postgraduate" },
+              ].map((opt) => (
+                <MenuItem key={opt.value} active={degreeLevel === opt.value} onClick={() => setDegreeLevel(opt.value)}>
+                  {opt.label}
+                </MenuItem>
+              ))}
             </div>
           </FilterMenu>
 
