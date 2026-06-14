@@ -359,13 +359,60 @@ export function Header() {
                 </div>
               ),
             )}
-            <Link
-              href={user?.role === "employer" ? "/post" : user ? "/browse" : "/register"}
-              onClick={() => setMobileOpen(false)}
-              className="mt-3 block rounded-2xl bg-coral-500 px-4 py-3 text-center text-sm font-bold text-white"
-            >
-              {user?.role === "employer" ? "Post an Internship" : user ? "Find Internships" : "Join free"}
-            </Link>
+            {/* Account / auth */}
+            <div className="mt-3 border-t border-line pt-3">
+              {user ? (
+                <>
+                  <div className="flex items-center gap-3 rounded-2xl bg-blue-50 px-4 py-3">
+                    <span className="grid size-9 place-items-center rounded-full bg-blue-600 text-xs font-bold text-white">
+                      {initials(user.name)}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm font-bold text-navy-950">{user.name}</span>
+                      <span className="block truncate text-xs text-muted">{user.email}</span>
+                    </span>
+                  </div>
+                  <Link href="/profile" onClick={() => setMobileOpen(false)} className="mt-1 flex items-center gap-2.5 rounded-2xl px-4 py-3 text-sm font-semibold text-navy-900 hover:bg-blue-50">
+                    <User size={17} className="text-blue-600" /> My profile
+                  </Link>
+                  <Link href="/dashboard" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-2xl px-4 py-3 text-sm font-semibold text-navy-900 hover:bg-blue-50">
+                    <LayoutDashboard size={17} className="text-blue-600" /> Dashboard
+                  </Link>
+                  <Link href="/billing" onClick={() => setMobileOpen(false)} className="flex items-center gap-2.5 rounded-2xl px-4 py-3 text-sm font-semibold text-navy-900 hover:bg-blue-50">
+                    <CreditCard size={17} className="text-blue-600" /> Billing & payments
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      setMobileOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2.5 rounded-2xl px-4 py-3 text-sm font-semibold text-coral-600 hover:bg-coral-500/10"
+                  >
+                    <LogOut size={17} /> Sign out
+                  </button>
+                </>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <Link href="/login" onClick={() => setMobileOpen(false)} className="rounded-2xl border border-line px-4 py-3 text-center text-sm font-bold text-navy-900 hover:bg-blue-50">
+                    Sign in
+                  </Link>
+                  <Link href="/register" onClick={() => setMobileOpen(false)} className="rounded-2xl bg-blue-600 px-4 py-3 text-center text-sm font-bold text-white hover:bg-blue-700">
+                    Create account
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {user && (
+              <Link
+                href={user.role === "employer" ? "/post" : "/browse"}
+                onClick={() => setMobileOpen(false)}
+                className="mt-3 block rounded-2xl bg-coral-500 px-4 py-3 text-center text-sm font-bold text-white"
+              >
+                {user.role === "employer" ? "Post an Internship" : "Find Internships"}
+              </Link>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
