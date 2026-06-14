@@ -207,6 +207,7 @@ export function FloatingAIBot() {
   const [typing, setTyping] = useState(false);
   const msgEndRef = useRef<HTMLDivElement>(null);
   const botRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const isPaid = user?.role === "student" && (activePlan === "Plus" || activePlan === "Pro");
   const chatKey = user ? `interns-store:chat:${user.id}` : null;
@@ -266,6 +267,20 @@ export function FloatingAIBot() {
   useEffect(() => {
     if (open) msgEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, typing, open]);
+
+  // focus the input when the chat opens, and close on Escape
+  useEffect(() => {
+    if (!open) return;
+    const t = setTimeout(() => inputRef.current?.focus(), 250);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
 
   // cursor eye-tracking
   useEffect(() => {
@@ -425,6 +440,7 @@ export function FloatingAIBot() {
               className="flex items-center gap-2 border-t border-line bg-white px-3 py-3"
             >
               <input
+                ref={inputRef}
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="Ask me anything…"
