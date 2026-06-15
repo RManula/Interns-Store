@@ -188,6 +188,8 @@ export function PricingClient() {
     user?.role === "employer" ? "employers" : "students",
   );
   const [yearly, setYearly] = useState(false);
+  // Logged-in users only see plans for their own role; signed-out users can switch.
+  const activeTab = user ? (user.role === "employer" ? "employers" : "students") : tab;
 
   return (
     <div>
@@ -208,7 +210,8 @@ export function PricingClient() {
             Employers hire on flexible plans.
           </p>
 
-          {/* Tab switcher */}
+          {/* Tab switcher — only when signed out (logged-in users see their own plans) */}
+          {!user && (
           <div className="mt-10 inline-flex rounded-full border border-navy-800 bg-navy-900/80 p-1 backdrop-blur-sm">
             {(["students", "employers"] as const).map((t) => (
               <button
@@ -232,6 +235,7 @@ export function PricingClient() {
               </button>
             ))}
           </div>
+          )}
 
           {/* Billing toggle */}
           <div className="mt-6">
@@ -241,7 +245,7 @@ export function PricingClient() {
       </section>
 
       {/* ── STUDENT PLANS ─────────────────────────────────────────────── */}
-      {tab === "students" && (
+      {activeTab === "students" && (
         <>
         <section
           id="students"
@@ -355,7 +359,7 @@ export function PricingClient() {
       )}
 
       {/* ── EMPLOYER PLANS ────────────────────────────────────────────── */}
-      {tab === "employers" && (
+      {activeTab === "employers" && (
         <>
           <section
             id="employers"

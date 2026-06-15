@@ -5,21 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  BookOpen,
-  Box,
   BriefcaseBusiness,
   ChevronDown,
   CreditCard,
   FileText,
-  Globe2,
-  GraduationCap,
   LayoutDashboard,
   LogOut,
-  MapPin,
   Menu,
   Newspaper,
-  Rocket,
-  Search,
   User,
   X,
   type LucideIcon,
@@ -40,33 +33,13 @@ type NavItem =
 
 const navigation: NavItem[] = [
   { label: "Home", href: "/" },
-  {
-    label: "Students",
-    href: "/for-students",
-    items: [
-      { label: "Browse Internships", description: "Find roles built for students", href: "/browse", icon: Search },
-      { label: "Career Advice", description: "Guides, templates and tips", href: "/career-advice", icon: BookOpen },
-      { label: "Companies", description: "Explore employers hiring interns", href: "/companies", icon: Globe2 },
-      { label: "My Profile", description: "Build and edit your profile", href: "/profile", icon: User },
-    ],
-  },
-  {
-    label: "Employers",
-    href: "/for-employers",
-    items: [
-      { label: "Post an Internship", description: "Reach work-ready students", href: "/post", icon: Rocket },
-      { label: "Pricing & Plans", description: "Subscriptions and listing fees", href: "/pricing", icon: Box },
-      { label: "Employer Dashboard", description: "Screen and manage applicants", href: "/for-employers", icon: BriefcaseBusiness },
-      { label: "Why Interns Store", description: "Australia's internship-only marketplace", href: "/for-employers", icon: Globe2 },
-    ],
-  },
-  { label: "Browse", href: "/browse" },
+  { label: "Find Internships", href: "/browse" },
   { label: "Pricing", href: "/pricing" },
   {
-    label: "Company",
+    label: "About",
     href: "/about",
     items: [
-      { label: "About", description: "Our mission and team", href: "/about", icon: User },
+      { label: "About Us", description: "Our mission and team", href: "/about", icon: User },
       { label: "Blog", description: "Tips, news and updates", href: "/blog", icon: FileText },
       { label: "Contact", description: "Get in touch", href: "/contact", icon: Newspaper },
     ],
@@ -281,20 +254,11 @@ export function Header() {
           ) : (
             <Link
               href="/login"
-              className={cn(
-                "whitespace-nowrap rounded-full px-3.5 py-2 text-sm font-bold transition",
-                isLight ? "text-navy-900 hover:bg-blue-50" : "text-white/85 hover:bg-white/10",
-              )}
+              className="whitespace-nowrap rounded-full bg-blue-600 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-blue-600/25 transition hover:-translate-y-0.5 hover:bg-blue-700"
             >
-              Sign in
+              Log in
             </Link>
           )}
-          <Link
-            href={user?.role === "employer" ? "/post" : user ? "/browse" : "/register"}
-            className="whitespace-nowrap rounded-full bg-coral-500 px-4 py-2.5 text-xs font-bold text-white shadow-lg shadow-coral-500/25 transition hover:-translate-y-0.5 hover:bg-coral-600"
-          >
-            {user?.role === "employer" ? "Post an Internship" : user ? "Find Internships" : "Join free"}
-          </Link>
         </div>
 
         <button
@@ -421,15 +385,6 @@ export function Header() {
               )}
             </div>
 
-            {user && (
-              <Link
-                href={user.role === "employer" ? "/post" : "/browse"}
-                onClick={() => setMobileOpen(false)}
-                className="mt-3 block rounded-2xl bg-coral-500 px-4 py-3 text-center text-sm font-bold text-white"
-              >
-                {user.role === "employer" ? "Post an Internship" : "Find Internships"}
-              </Link>
-            )}
           </motion.div>
         )}
       </AnimatePresence>
