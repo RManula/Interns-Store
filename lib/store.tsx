@@ -118,7 +118,7 @@ function seedAccounts(): Account[] {
       password: "password",
       savedJobs: [],
       applications: [],
-      activePlan: "Free",
+      activePlan: "Basic",
       paymentMethod: null,
       paymentHistory: [],
       user: {
@@ -160,7 +160,7 @@ function seedAccounts(): Account[] {
       password: "password",
       savedJobs: [],
       applications: [],
-      activePlan: "Growth",
+      activePlan: "Per listing",
       paymentMethod: { type: "Visa", last4: "4242", expiry: "12/28" },
       paymentHistory: [
         { id: "inv-001", date: "2026-05-14", description: "Growth Plan", amount: 165.00, status: "Paid" },
@@ -182,7 +182,7 @@ function seedAccounts(): Account[] {
           contactName: "Jordan Wells",
           position: "People Lead",
           phone: "+61 7 3000 0000",
-          plan: "Growth",
+          plan: "Per listing",
         },
       },
     },
@@ -314,7 +314,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         password,
         savedJobs: [],
         applications: [],
-        activePlan: "Free",
+        activePlan: "Basic",
         paymentMethod: null,
         paymentHistory: [],
         user: {
@@ -344,7 +344,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         password,
         savedJobs: [],
         applications: [],
-        activePlan: profile.plan ?? "Starter",
+        activePlan: profile.plan ?? "First listing",
         paymentMethod: null,
         paymentHistory: [],
         user: {
@@ -480,7 +480,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
 
   const cancelPlan = useCallback<AppContextValue["cancelPlan"]>(() => {
-    updateCurrentAccount((account) => ({ ...account, activePlan: "Free" }));
+    updateCurrentAccount((account) => ({ ...account, activePlan: "Basic" }));
   }, [updateCurrentAccount]);
 
   const addReview = useCallback<AppContextValue["addReview"]>((review) => {
@@ -503,8 +503,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       cart,
       activePlan: currentAccount?.activePlan ??
         (currentAccount?.user.role === "employer"
-          ? currentAccount.user.employer?.plan ?? "Starter"
-          : "Free"),
+          ? currentAccount.user.employer?.plan ?? "First listing"
+          : "Basic"),
       paymentMethod: currentAccount?.paymentMethod ?? null,
       paymentHistory: currentAccount?.paymentHistory ?? [],
       login,

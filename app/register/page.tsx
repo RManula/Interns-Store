@@ -92,7 +92,7 @@ function RegisterFlow() {
   const [companySize, setCompanySize] = useState(COMPANY_SIZES[1]);
   const [website, setWebsite] = useState("");
   const [position, setPosition] = useState("");
-  const [plan, setPlan] = useState<string>(plans[1].name);
+  const [plan, setPlan] = useState<string>(plans[0].name);
 
   const steps = role === "employer" ? EMPLOYER_STEPS : STUDENT_STEPS;
 

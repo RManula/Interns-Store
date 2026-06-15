@@ -10,7 +10,7 @@ export function InvoicePage() {
   const params = useSearchParams();
   const { user } = useApp();
 
-  const planName = params.get("plan") ?? "Growth";
+  const planName = params.get("plan") ?? "First listing";
   const total = parseFloat(params.get("total") ?? "165");
   const orderNumber = params.get("order") ?? "INV-2026-10001";
   const today = new Date().toLocaleDateString("en-AU", {

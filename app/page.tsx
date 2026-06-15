@@ -10,8 +10,10 @@ import {
   ShieldCheck,
   Target,
 } from "lucide-react";
+import Link from "next/link";
 import { HomeHero } from "@/components/home/HomeHero";
 import { NewsletterSignup } from "@/components/home/NewsletterSignup";
+import { ReviewsCarousel } from "@/components/home/ReviewsCarousel";
 import { CompanyLogo } from "@/components/shared/CompanyLogo";
 import { MotionSection, StaggerGrid, StaggerItem } from "@/components/ui/MotionSection";
 import { companies, testimonials } from "@/lib/data";
@@ -59,6 +61,35 @@ export default function Home() {
         </div>
       </section>
 
+      {/* About Us */}
+      <MotionSection className="section-pad bg-white">
+        <div className="container-shell grid items-center gap-10 lg:grid-cols-2">
+          <div>
+            <h2 className="section-title text-navy-950">About us</h2>
+            <p className="body-lg mt-5 text-muted">
+              Interns Store is an Australian marketplace made just for internships. We help students
+              and recent graduates find their first real opportunity, and we help employers reach
+              motivated, work-ready talent.
+            </p>
+            <p className="mt-4 text-muted">
+              Everything lives in one simple place — search and filter roles, apply with your
+              profile, track your applications, and read reviews from other students.
+            </p>
+            <Link href="/about" className="mt-6 inline-block rounded-full border border-line bg-white px-5 py-2.5 text-sm font-bold text-navy-900 transition hover:bg-blue-50">
+              Read more about us
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {[["Students first", "Every listing is built for early careers."], ["Verified employers", "Know who is hiring and what they offer."], ["Free to start", "Searching and applying is always free."], ["Local & remote", "Roles across Australia or from home."]].map(([t, d]) => (
+              <div key={t} className="soft-card p-5">
+                <p className="font-heading text-sm font-semibold text-navy-950">{t}</p>
+                <p className="mt-1 text-xs leading-5 text-muted">{d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </MotionSection>
+
       {/* How it works — roadmap */}
       <MotionSection className="section-pad mesh-light">
         <div className="container-shell">
@@ -86,7 +117,7 @@ export default function Home() {
       <MotionSection className="section-pad bg-navy-950 text-white">
         <div className="container-shell">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="section-title">Everything you need</h2>
+            <h2 className="section-title">Features</h2>
           </div>
           <StaggerGrid className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {features.map((feature) => (
@@ -106,11 +137,7 @@ export default function Home() {
       <MotionSection className="section-pad bg-white">
         <div className="container-shell">
           <div className="mx-auto max-w-2xl text-center"><h2 className="section-title text-navy-950">What students say</h2></div>
-          <StaggerGrid className="mt-12 grid gap-5 lg:grid-cols-3">
-            {testimonials.map((item) => (
-              <StaggerItem key={item.name}><div className="soft-card h-full p-7"><div className="flex gap-1 text-coral-500" aria-label="5 out of 5 stars">★★★★★</div><blockquote className="mt-6 text-lg font-semibold leading-8 text-navy-950">“{item.quote}”</blockquote><div className="mt-8 flex items-center gap-3"><span className="grid size-11 place-items-center rounded-full bg-blue-100 text-xs font-extrabold text-blue-700">{item.initials}</span><div><p className="text-sm font-extrabold">{item.name}</p><p className="text-xs text-muted">{item.role}</p></div></div></div></StaggerItem>
-            ))}
-          </StaggerGrid>
+          <ReviewsCarousel reviews={testimonials} />
         </div>
       </MotionSection>
 

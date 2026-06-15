@@ -335,7 +335,22 @@ export function FloatingAIBot() {
     };
   }, [isPaid]);
 
-  if (!isPaid || dismissed) return null;
+  if (!isPaid) return null;
+
+  // When hidden, show a small round launcher to bring the assistant back.
+  if (dismissed) {
+    return (
+      <button
+        type="button"
+        onClick={() => { setDismissed(false); setOpen(true); }}
+        aria-label="Open AI assistant"
+        title="AI Career Assistant"
+        className="fixed bottom-5 right-5 z-50 grid size-12 place-items-center rounded-full bg-blue-600 text-white shadow-[0_12px_30px_rgba(36,107,254,.45)] transition hover:-translate-y-0.5 hover:bg-blue-700"
+      >
+        <Sparkles size={20} />
+      </button>
+    );
+  }
 
   return (
     <div ref={botRef} className="fixed bottom-5 right-5 z-50 select-none">

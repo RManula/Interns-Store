@@ -8,11 +8,9 @@ import {
   BriefcaseBusiness,
   ChevronDown,
   CreditCard,
-  FileText,
   LayoutDashboard,
   LogOut,
   Menu,
-  Newspaper,
   User,
   X,
   type LucideIcon,
@@ -35,15 +33,8 @@ const navigation: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "Find Internships", href: "/browse" },
   { label: "Pricing", href: "/pricing" },
-  {
-    label: "About",
-    href: "/about",
-    items: [
-      { label: "About Us", description: "Our mission and team", href: "/about", icon: User },
-      { label: "Blog", description: "Tips, news and updates", href: "/blog", icon: FileText },
-      { label: "Contact", description: "Get in touch", href: "/contact", icon: Newspaper },
-    ],
-  },
+  { label: "Contact", href: "/contact" },
+  { label: "Blog", href: "/blog" },
 ];
 
 export function Header() {

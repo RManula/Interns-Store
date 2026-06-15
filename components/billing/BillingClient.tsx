@@ -78,7 +78,7 @@ export function BillingClient() {
   const isEmployer = user.role === "employer";
   const allPlans = isEmployer ? plans : studentPlans;
   const currentPlanData = allPlans.find((p) => p.name === activePlan);
-  const isPaid = activePlan !== "Free";
+  const isPaid = activePlan !== "Basic" && activePlan !== "Free";
 
   // Compute next renewal (approx 1 month from last payment, or just today +30)
   const lastPayment = paymentHistory[0];

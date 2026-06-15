@@ -57,8 +57,8 @@ export function CheckoutClient() {
   const params = useSearchParams();
   const { ready, user, setCart, clearCart, upgradePlan } = useApp();
 
-  const planName = params.get("plan") ?? "Growth";
-  const plan = plans.find((p) => p.name === planName) ?? plans[1];
+  const planName = params.get("plan") ?? "First listing";
+  const plan = plans.find((p) => p.name === planName) ?? plans[0];
   const basePrice = parseInt(plan.price.replace(/\D/g, ""), 10);
 
   const [selectedAddOns, setSelectedAddOns] = useState<CartAddOn[]>([]);
@@ -249,7 +249,7 @@ export function CheckoutClient() {
             </div>
 
             {/* Optional add-ons */}
-            {plan.name !== "Scale" && (
+            {plan.priceNum > 0 && (
               <div className="rounded-2xl border border-line bg-white p-6 sm:p-8">
                 <h2 className="mb-4 font-heading text-lg font-semibold text-navy-950">
                   Optional add-ons

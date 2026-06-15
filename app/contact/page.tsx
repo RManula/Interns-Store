@@ -9,7 +9,6 @@ export default function ContactPage() {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-  const [role, setRole] = useState("A student or graduate");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -39,13 +38,12 @@ export default function ContactPage() {
         <div className="mt-14 grid gap-6 lg:grid-cols-[.8fr_1.2fr]">
           {/* Left info panel */}
           <div className="rounded-[2.25rem] bg-navy-900 p-8 text-white sm:p-10">
-            <h2 className="text-2xl font-semibold">Talk to the team</h2>
-            <div className="mt-8 space-y-6">
+            <div className="space-y-6">
               <p className="flex items-center gap-4 text-white/65">
                 <span className="grid size-11 place-items-center rounded-2xl bg-white/8 text-blue-100">
                   <Mail size={19} />
                 </span>
-                hello@internsstore.com.au
+                info@internsstore.com.au
               </p>
               <p className="flex items-center gap-4 text-white/65">
                 <span className="grid size-11 place-items-center rounded-2xl bg-white/8 text-blue-100">
@@ -140,17 +138,6 @@ export default function ContactPage() {
                   onChange={(e) => setPhone(e.target.value)}
                   className={inputCls}
                 />
-              </Label>
-              <Label text="I'm contacting as" className="sm:col-span-2">
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value)}
-                  className={inputCls}
-                >
-                  <option>A student or graduate</option>
-                  <option>An employer</option>
-                  <option>A university partner</option>
-                </select>
               </Label>
               <Label text="How can we help?" className="sm:col-span-2">
                 <textarea

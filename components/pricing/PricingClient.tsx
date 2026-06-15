@@ -6,7 +6,7 @@ import { Check, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import NumberFlow from "@number-flow/react";
 import { useApp } from "@/lib/store";
-import { plans, studentPlans, studentFeatures, employerFeatures, pricingFaqs } from "@/lib/data";
+import { plans, studentPlans, studentFeatures, pricingFaqs } from "@/lib/data";
 import { Bot } from "lucide-react";
 import { Accordion } from "@/components/ui/Accordion";
 import { cn } from "@/lib/utils";
@@ -253,7 +253,7 @@ export function PricingClient() {
           style={{ background: "linear-gradient(180deg, #07152f 0%, #0b1f46 100%)" }}
         >
           <div className="container-shell">
-            {user?.role === "student" && activePlan !== "Free" && (
+            {user?.role === "student" && activePlan !== "Basic" && activePlan !== "Free" && (
               <div className="mb-8 rounded-2xl border border-blue-800/40 bg-blue-950/40 px-6 py-4 text-sm text-blue-200">
                 You are on the <strong>Student {activePlan}</strong> plan.{" "}
                 <Link href="/billing" className="font-bold text-blue-400 hover:underline">
@@ -268,7 +268,7 @@ export function PricingClient() {
                 return (
                   <PlanCard
                     key={plan.name}
-                    name={`Student ${plan.name}`}
+                    name={plan.name}
                     description={plan.description}
                     priceNum={plan.priceNum}
                     yearly={yearly}
@@ -400,60 +400,12 @@ export function PricingClient() {
             </div>
           </section>
 
-          {/* Feature comparison table */}
-          <section className="section-pad bg-surface">
-            <div className="container-shell">
-              <h2 className="mb-10 text-center font-heading text-2xl font-semibold text-navy-950">
-                Compare all features
-              </h2>
-              <div className="overflow-x-auto rounded-2xl border border-line">
-                <table className="w-full min-w-[640px] text-sm">
-                  <thead>
-                    <tr className="border-b border-line bg-navy-950 text-white">
-                      <th className="w-1/2 px-6 py-4 text-left font-semibold">Feature</th>
-                      {plans.map((p) => (
-                        <th key={p.name} className="px-4 py-4 text-center font-semibold">
-                          {p.name}
-                          <span className="ms-1.5 text-xs font-normal text-white/50">{p.price}</span>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {employerFeatures.map((section) => (
-                      <>
-                        <tr key={section.category} className="border-b border-line bg-blue-50/60">
-                          <td colSpan={4} className="px-6 py-2.5 text-xs font-extrabold uppercase tracking-widest text-navy-700">
-                            {section.category}
-                          </td>
-                        </tr>
-                        {section.rows.map((row) => (
-                          <tr key={row.label} className="border-b border-line last:border-0 hover:bg-blue-50/30">
-                            <td className="px-6 py-3.5 font-medium text-navy-900">{row.label}</td>
-                            {row.values.map((val, i) => (
-                              <td key={i} className="px-4 py-3.5 text-center">
-                                {val === true ? (
-                                  <Check size={17} className="mx-auto text-mint-500" />
-                                ) : val === false ? (
-                                  <X size={15} className="mx-auto text-red-400" />
-                                ) : (
-                                  <span className="font-semibold text-navy-950">{val}</span>
-                                )}
-                              </td>
-                            ))}
-                          </tr>
-                        ))}
-                      </>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <p className="mt-6 text-center text-sm text-muted">
-                All employer plans include a 14-day money-back guarantee. Questions?{" "}
-                <Link href="/contact" className="font-bold text-blue-700 hover:underline">
-                  Contact us
-                </Link>
+          <section className="bg-surface pb-14">
+            <div className="container-shell max-w-3xl text-center">
+              <p className="text-sm text-muted">
+                Your first internship listing is free. After that you only pay per listing — no
+                monthly plans, no lock-in. Questions?{" "}
+                <Link href="/contact" className="font-bold text-blue-700 hover:underline">Contact us</Link>.
               </p>
             </div>
           </section>
@@ -464,8 +416,8 @@ export function PricingClient() {
       <section className="section-pad bg-white">
         <div className="container-shell max-w-3xl">
           <div className="text-center">
-            <span className="eyebrow justify-center">Pricing FAQ</span>
-            <h2 className="section-title mt-5 text-navy-950">Billing questions, answered.</h2>
+            <span className="eyebrow justify-center">FAQ</span>
+            <h2 className="section-title mt-5 text-navy-950">Frequently asked questions</h2>
           </div>
           <div className="mt-10">
             <Accordion items={[...pricingFaqs]} />

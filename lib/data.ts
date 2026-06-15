@@ -321,7 +321,7 @@ export const internships: Internship[] = [
 
 export const studentPlans = [
   {
-    name: "Free",
+    name: "Basic",
     price: "$0",
     priceNum: 0,
     period: "forever",
@@ -344,7 +344,7 @@ export const studentPlans = [
     period: "per month",
     description: "Stand out to employers and track your progress.",
     features: [
-      "Everything in Free",
+      "Everything in Basic",
       "Featured profile — 2× employer views",
       "Unlimited saved internships",
       "Application analytics & insights",
@@ -423,30 +423,21 @@ export const studentFeatures = [
 
 export const plans = [
   {
-    name: "Starter",
-    price: "$49",
-    priceNum: 49,
-    period: "per listing",
-    description: "A focused launch for one internship opportunity.",
-    features: ["1 active listing", "Verified employer badge", "Applicant inbox"],
-    featured: false,
-  },
-  {
-    name: "Growth",
-    price: "$150",
-    priceNum: 150,
-    period: "per month",
-    description: "For growing teams building a repeatable intern pipeline.",
-    features: ["5 active listings", "Featured placement", "Candidate insights"],
+    name: "First listing",
+    price: "$0",
+    priceNum: 0,
+    period: "free",
+    description: "Post your very first internship at no cost.",
+    features: ["1 internship listing", "Verified employer badge", "Applicant inbox", "Manage from your dashboard"],
     featured: true,
   },
   {
-    name: "Scale",
-    price: "$390",
-    priceNum: 390,
-    period: "per month",
-    description: "High-volume university and graduate recruitment.",
-    features: ["Unlimited listings", "Priority campaigns", "Team analytics"],
+    name: "Per listing",
+    price: "$49",
+    priceNum: 49,
+    period: "per listing",
+    description: "Each additional internship after your free first listing.",
+    features: ["Everything in your first listing", "Featured placement option", "Candidate insights", "Pay only for what you post"],
     featured: false,
   },
 ];
@@ -507,6 +498,41 @@ export const testimonials = [
     name: "Isaac Brown",
     role: "Business graduate, UQ",
     initials: "IB",
+  },
+  {
+    quote:
+      "I found a paid internship that counted towards my degree. The filters made it so easy to find the right fit.",
+    name: "Aisha Khan",
+    role: "Engineering student, RMIT",
+    initials: "AK",
+  },
+  {
+    quote:
+      "The AI assistant helped me tidy up my CV before I applied. I got an interview the same week.",
+    name: "Daniel Lee",
+    role: "IT student, Monash",
+    initials: "DL",
+  },
+  {
+    quote:
+      "As a first-year I didn't think I'd qualify for anything. The beginner-friendly roles changed that.",
+    name: "Sophie Turner",
+    role: "Science student, UNSW",
+    initials: "ST",
+  },
+  {
+    quote:
+      "Posting our first internship was free and simple. We had quality applicants within days.",
+    name: "Marcus Webb",
+    role: "Hiring Manager, Northstar",
+    initials: "MW",
+  },
+  {
+    quote:
+      "Everything in one place — search, apply and track. It saved me so much time during exams.",
+    name: "Priya Nair",
+    role: "Data student, USyd",
+    initials: "PN",
   },
 ] as const;
 

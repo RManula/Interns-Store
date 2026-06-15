@@ -4,7 +4,7 @@ export const site = {
   description:
     "Australia's student-first internship marketplace. Find, apply for and track internships in one place, free.",
   abn: "00 000 000 000",
-  email: "hello@internsstore.com.au",
+  email: "info@internsstore.com.au",
   phone: "+61 7 3000 2026",
   address: "Brisbane, Queensland, Australia",
   disclaimer:

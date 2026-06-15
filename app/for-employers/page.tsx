@@ -131,7 +131,7 @@ export default function EmployersPage() {
         title="Build an internship people talk about for the right reasons."
         text="Publish your opportunity, reach relevant students and create a stronger early-career pipeline."
         primary={{ label: "Post an Internship", href: "/pricing" }}
-        secondary={{ label: "Talk to our team", href: "/contact" }}
+        secondary={{ label: "Contact us", href: "/contact" }}
       />
     </>
   );
