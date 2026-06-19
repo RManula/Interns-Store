@@ -1,0 +1,92 @@
+// Interns Store backend — Prisma schema (Neon Postgres)
+// Mirrors the shapes in lib/types.ts so the app's data layer can swap
+// localStorage for a real database without changing UI components.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  role         String // "student" | "employer"
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  // Profiles stored as JSON — they match StudentProfile / EmployerProfile in lib/types.ts.
+  student  Json?
+  employer Json?
+
+  // Billing (payments are simulated, but the records persist).
+  activePlan     String  @default("Basic")
+  paymentMethod  Json? // { type, last4, expiry }
+  paymentHistory Json    @default("[]") // PaymentRecord[]
+
+  savedJobs    SavedJob[]
+  applications Application[]
+  listings     Listing[]
+  reviews      Review[]
+}
+
+model SavedJob {
+  id     String @id @default(cuid())
+  userId String
+  jobId  String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+  @@index([userId])
+}
+
+model Application {
+  id          String   @id @default(cuid())
+  userId      String
+  jobId       String
+  jobRole     String
+  company     String
+  status      String   @default("Submitted")
+  submittedAt DateTime @default(now())
+  resumeName  String?
+  coverLetter String?
+  answers     Json     @default("{}")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, jobId])
+  @@index([userId])
+}
+
+// Employer-posted internships. The full Internship object (lib/types.ts) is
+// stored as JSON so Browse can merge these with the static catalogue verbatim.
+model Listing {
+  id           String   @id // the Internship.id slug
+  postedById   String
+  companyId    String
+  data         Json // the complete Internship object
+  createdAt    DateTime @default(now())
+  postedBy     User     @relation(fields: [postedById], references: [id], onDelete: Cascade)
+
+  @@index([postedById])
+}
+
+model Review {
+  id          String   @id @default(cuid())
+  companyId   String
+  companyName String
+  authorName  String
+  authorRole  String // "student" | "employer"
+  rating      Int
+  title       String
+  body        String
+  date        DateTime @default(now())
+  authorId    String?
+  author      User?    @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([companyId])
+}

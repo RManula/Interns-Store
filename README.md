@@ -88,6 +88,48 @@ lib/                  Site configuration, content data, and utilities
 public/               Static public assets
 ```
 
+## Backend & Database
+
+Dynamic data (accounts, saved jobs, applications, employer-posted listings,
+reviews, and simulated billing) is persisted in a **PostgreSQL** database via
+**Prisma** and Next.js API routes. Authentication uses bcrypt-hashed passwords
+and an HMAC-signed, httpOnly session cookie. Recent searches and the checkout
+cart remain device-local. Payments are simulated (no real processor).
+
+### Environment variables
+
+Create a `.env` file (already gitignored):
+
+```bash
+DATABASE_URL="<Neon POOLED connection string>"   # host contains "-pooler"
+DIRECT_URL="<Neon DIRECT connection string>"     # used for migrations
+APP_SECRET="<random 32-byte hex string>"         # signs the session cookie
+```
+
+### Database setup
+
+```bash
+npm run db:push    # create the tables from prisma/schema.prisma
+npm run db:seed    # load 3 demo accounts + seed reviews
+npm run db:studio  # (optional) browse data in Prisma Studio
+```
+
+Demo logins (password `password`): `student@demo.com`, `employer@demo.com`,
+`pro@demo.com`.
+
+### API routes
+
+| Route | Purpose |
+| --- | --- |
+| `POST /api/auth/register` · `login` · `logout` | Account creation, sign-in, sign-out |
+| `GET /api/me` | Current session user + saved jobs + applications |
+| `POST /api/saved` | Toggle a saved job |
+| `POST /api/applications` | Submit an application |
+| `PATCH /api/profile` | Update student profile |
+| `GET/POST /api/listings` | List / publish employer internships |
+| `GET/POST /api/reviews` | List / add company reviews |
+| `POST /api/billing` | Simulated plan upgrade / payment method / cancel |
+
 ## Deployment
 
 The recommended deployment platform is Vercel:

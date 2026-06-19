@@ -68,6 +68,7 @@ function RegisterFlow() {
   const [step, setStep] = useState(1);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   // shared
   const [name, setName] = useState("");
@@ -131,12 +132,14 @@ function RegisterFlow() {
       setStep((s) => s + 1);
       return;
     }
-    submit();
+    void submit();
   };
 
-  const submit = () => {
+  const submit = async () => {
+    if (submitting) return;
+    setSubmitting(true);
     if (role === "student") {
-      const result = registerStudent({
+      const result = await registerStudent({
         name: name.trim(),
         email,
         password,
@@ -156,9 +159,9 @@ function RegisterFlow() {
             : [],
         },
       });
-      if (!result.ok) { setStep(1); setError(result.error ?? "Unable to create account."); return; }
+      if (!result.ok) { setSubmitting(false); setStep(1); setError(result.error ?? "Unable to create account."); return; }
     } else {
-      const result = registerEmployer({
+      const result = await registerEmployer({
         name: name.trim(),
         email,
         password,
@@ -174,7 +177,7 @@ function RegisterFlow() {
           plan,
         },
       });
-      if (!result.ok) { setStep(1); setError(result.error ?? "Unable to create account."); return; }
+      if (!result.ok) { setSubmitting(false); setStep(1); setError(result.error ?? "Unable to create account."); return; }
     }
     router.push(next || "/dashboard");
   };
@@ -367,9 +370,10 @@ function RegisterFlow() {
           <button
             type="button"
             onClick={goNext}
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-extrabold text-white transition hover:bg-blue-700"
+            disabled={submitting}
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-extrabold text-white transition hover:bg-blue-700 disabled:opacity-60"
           >
-            {step < 3 ? "Continue" : "Create account"}
+            {submitting ? "Creating account…" : step < 3 ? "Continue" : "Create account"}
             <ArrowRight size={16} />
           </button>
 

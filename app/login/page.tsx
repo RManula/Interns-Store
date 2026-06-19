@@ -19,7 +19,9 @@ function LoginForm() {
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({ email: "", password: "" });
 
-  const submit = (event: React.FormEvent) => {
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async (event: React.FormEvent) => {
     event.preventDefault();
     const errors = { email: "", password: "" };
     if (!email.trim()) {
@@ -36,8 +38,10 @@ function LoginForm() {
     }
     setFieldErrors({ email: "", password: "" });
     setError("");
-    const result = login(email, password);
+    setSubmitting(true);
+    const result = await login(email, password);
     if (!result.ok) {
+      setSubmitting(false);
       setError(result.error ?? "Unable to sign in.");
       return;
     }
@@ -130,9 +134,10 @@ function LoginForm() {
             )}
             <button
               type="submit"
-              className="w-full rounded-xl bg-blue-600 py-3 text-sm font-extrabold text-white transition hover:bg-blue-700"
+              disabled={submitting}
+              className="w-full rounded-xl bg-blue-600 py-3 text-sm font-extrabold text-white transition hover:bg-blue-700 disabled:opacity-60"
             >
-              Sign in
+              {submitting ? "Signing in…" : "Sign in"}
             </button>
           </form>
 

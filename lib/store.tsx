@@ -22,16 +22,6 @@ import type {
   User,
 } from "@/lib/types";
 
-type Account = {
-  user: User;
-  password: string;
-  savedJobs: string[];
-  applications: Application[];
-  activePlan: string;
-  paymentMethod: PaymentMethod | null;
-  paymentHistory: PaymentRecord[];
-};
-
 type RegisterStudentInput = {
   name: string;
   email: string;
@@ -46,6 +36,8 @@ type RegisterEmployerInput = {
   profile: EmployerProfile;
 };
 
+type Result = { ok: boolean; error?: string };
+
 type AppContextValue = {
   ready: boolean;
   user: User | null;
@@ -57,9 +49,9 @@ type AppContextValue = {
   activePlan: string;
   paymentMethod: PaymentMethod | null;
   paymentHistory: PaymentRecord[];
-  login: (email: string, password: string) => { ok: boolean; error?: string };
-  registerStudent: (input: RegisterStudentInput) => { ok: boolean; error?: string };
-  registerEmployer: (input: RegisterEmployerInput) => { ok: boolean; error?: string };
+  login: (email: string, password: string) => Promise<Result>;
+  registerStudent: (input: RegisterStudentInput) => Promise<Result>;
+  registerEmployer: (input: RegisterEmployerInput) => Promise<Result>;
   logout: () => void;
   toggleSave: (jobId: string) => void;
   isSaved: (jobId: string) => boolean;
@@ -78,18 +70,9 @@ type AppContextValue = {
   addReview: (review: Omit<Review, "id" | "date">) => void;
 };
 
-const ACCOUNTS_KEY = "interns-store:accounts";
-const SESSION_KEY = "interns-store:session";
+// Recent searches and the checkout cart stay device-local (ephemeral UX state).
 const RECENT_KEY = "interns-store:recent-searches";
-const LISTINGS_KEY = "interns-store:listings";
 const CART_KEY = "interns-store:cart";
-const REVIEWS_KEY = "interns-store:reviews";
-
-const SEED_REVIEWS: Review[] = [
-  { id: "rev-seed-1", companyId: "atlassian", companyName: "Atlassian", authorName: "Priya N.", authorRole: "student", rating: 5, title: "Best first experience", body: "Mentors actually invested time in me and I shipped real features. Felt like part of the team from week one.", date: "2026-05-20" },
-  { id: "rev-seed-2", companyId: "commbank", companyName: "CommBank", authorName: "Liam R.", authorRole: "student", rating: 4, title: "Structured and supportive", body: "The 12-week program was well organised with clear goals. Great exposure to how a big bank builds software.", date: "2026-05-02" },
-  { id: "rev-seed-3", companyId: "google", companyName: "Google", authorName: "Sam T.", authorRole: "student", rating: 5, title: "Learned an incredible amount", body: "Working on large-scale systems with world-class engineers was a genuine career accelerator.", date: "2026-04-18" },
-];
 
 const AppContext = createContext<AppContextValue | null>(null);
 
@@ -112,410 +95,251 @@ function uid(prefix: string) {
   return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-function seedAccounts(): Account[] {
-  return [
-    {
-      password: "password",
-      savedJobs: [],
-      applications: [],
-      activePlan: "Basic",
-      paymentMethod: null,
-      paymentHistory: [],
-      user: {
-        id: "demo-student",
-        role: "student",
-        name: "Alex Taylor",
-        email: "student@demo.com",
-        createdAt: "2026-01-12",
-        student: {
-          headline: "Final-year Computer Science student",
-          location: "Brisbane, QLD",
-          phone: "+61 400 000 000",
-          rightToWork: "I'm an Australian citizen",
-          resumeName: "Alex-Taylor-Resume.pdf",
-          education: [
-            {
-              id: "edu-1",
-              qualification: "Bachelor of Computer Science",
-              institution: "Queensland University of Technology",
-              finished: "Expected 2026",
-              detail: "Majoring in software engineering and cyber security.",
-            },
-          ],
-          careerHistory: [
-            {
-              id: "role-1",
-              title: "IT Support Volunteer",
-              organisation: "Campus Tech Help",
-              period: "2025 - Present",
-              location: "Brisbane, QLD",
-              detail: "First-line support for students and staff.",
-            },
-          ],
-          skills: ["JavaScript", "Python", "Teamwork", "Problem solving"],
-        },
-      },
-    },
-    {
-      password: "password",
-      savedJobs: [],
-      applications: [],
-      activePlan: "Per listing",
-      paymentMethod: { type: "Visa", last4: "4242", expiry: "12/28" },
-      paymentHistory: [
-        { id: "inv-001", date: "2026-05-14", description: "Growth Plan", amount: 165.00, status: "Paid" },
-        { id: "inv-002", date: "2026-04-14", description: "Growth Plan", amount: 165.00, status: "Paid" },
-        { id: "inv-003", date: "2026-03-14", description: "Growth Plan", amount: 165.00, status: "Paid" },
-      ],
-      user: {
-        id: "demo-employer",
-        role: "employer",
-        name: "Jordan Wells",
-        email: "employer@demo.com",
-        createdAt: "2026-01-10",
-        employer: {
-          companyName: "Canopy Labs",
-          abn: "12 345 678 901",
-          industry: "Design & Product Studio",
-          companySize: "51-200 employees",
-          website: "https://canopylabs.example",
-          contactName: "Jordan Wells",
-          position: "People Lead",
-          phone: "+61 7 3000 0000",
-          plan: "Per listing",
-        },
-      },
-    },
-    {
-      password: "password",
-      savedJobs: ["atlassian-software-engineering-intern", "google-ux-design-intern"],
-      applications: [],
-      activePlan: "Pro",
-      paymentMethod: { type: "Mastercard", last4: "5678", expiry: "09/27" },
-      paymentHistory: [
-        { id: "inv-p01", date: "2026-06-01", description: "Student Pro Plan", amount: 24.99, status: "Paid" },
-        { id: "inv-p02", date: "2026-05-01", description: "Student Pro Plan", amount: 24.99, status: "Paid" },
-        { id: "inv-p03", date: "2026-04-01", description: "Student Pro Plan", amount: 24.99, status: "Paid" },
-      ],
-      user: {
-        id: "demo-student-pro",
-        role: "student",
-        name: "Sam Rivera",
-        email: "pro@demo.com",
-        createdAt: "2026-03-01",
-        student: {
-          headline: "Master of Data Science student — AI & ML focus",
-          location: "Sydney, NSW",
-          phone: "+61 411 000 000",
-          rightToWork: "I'm an Australian citizen",
-          resumeName: "Sam-Rivera-Resume.pdf",
-          education: [
-            {
-              id: "edu-1",
-              qualification: "Master of Data Science",
-              institution: "University of Sydney",
-              finished: "Expected 2027",
-              detail: "Specialising in machine learning and AI applications.",
-            },
-          ],
-          careerHistory: [
-            {
-              id: "role-1",
-              title: "Research Assistant",
-              organisation: "USyd AI Lab",
-              period: "2025 - Present",
-              location: "Sydney, NSW",
-              detail: "Assisted in NLP research and published two papers.",
-            },
-          ],
-          skills: ["Python", "TensorFlow", "Data Analysis", "Machine Learning", "SQL", "Research"],
-        },
-      },
-    },
-  ];
+async function postJSON(url: string, body?: unknown) {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  return res.json().catch(() => ({}));
 }
+
+type MeResponse = {
+  user: User | null;
+  savedJobs?: string[];
+  applications?: Application[];
+  activePlan?: string;
+  paymentMethod?: PaymentMethod | null;
+  paymentHistory?: PaymentRecord[];
+};
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [savedJobs, setSavedJobs] = useState<string[]>([]);
+  const [applications, setApplications] = useState<Application[]>([]);
+  const [activePlan, setActivePlan] = useState<string>("Basic");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [paymentHistory, setPaymentHistory] = useState<PaymentRecord[]>([]);
   const [postedListings, setPostedListings] = useState<Internship[]>([]);
-  const [cart, setCartState] = useState<CartItem | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
+  const [cart, setCartState] = useState<CartItem | null>(null);
+
+  // Apply a /api/me-shaped payload to local state.
+  const applySession = useCallback((data: MeResponse) => {
+    setUser(data.user ?? null);
+    setSavedJobs(data.savedJobs ?? []);
+    setApplications(data.applications ?? []);
+    setActivePlan(data.activePlan ?? (data.user?.role === "employer" ? "First listing" : "Basic"));
+    setPaymentMethod(data.paymentMethod ?? null);
+    setPaymentHistory(data.paymentHistory ?? []);
+  }, []);
+
+  const clearSession = useCallback(() => {
+    setUser(null);
+    setSavedJobs([]);
+    setApplications([]);
+    setActivePlan("Basic");
+    setPaymentMethod(null);
+    setPaymentHistory([]);
+  }, []);
 
   useEffect(() => {
-    const stored = readJSON<Account[]>(ACCOUNTS_KEY, []);
-    const initial = stored.length ? stored : seedAccounts();
-    if (!stored.length) writeJSON(ACCOUNTS_KEY, initial);
-    setAccounts(initial);
-    setSessionId(readJSON<string | null>(SESSION_KEY, null));
     setRecentSearches(readJSON<RecentSearch[]>(RECENT_KEY, []));
-    setPostedListings(readJSON<Internship[]>(LISTINGS_KEY, []));
     setCartState(readJSON<CartItem | null>(CART_KEY, null));
-    const storedReviews = readJSON<Review[]>(REVIEWS_KEY, []);
-    setReviews(storedReviews.length ? storedReviews : SEED_REVIEWS);
-    setReady(true);
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const [meRes, listRes, revRes] = await Promise.all([
+          fetch("/api/me").then((r) => r.json()).catch(() => ({ user: null })),
+          fetch("/api/listings").then((r) => r.json()).catch(() => ({ listings: [] })),
+          fetch("/api/reviews").then((r) => r.json()).catch(() => ({ reviews: [] })),
+        ]);
+        if (cancelled) return;
+        applySession(meRes as MeResponse);
+        setPostedListings((listRes?.listings ?? []) as Internship[]);
+        setReviews((revRes?.reviews ?? []) as Review[]);
+      } finally {
+        if (!cancelled) setReady(true);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applySession]);
+
+  // ---- Auth -------------------------------------------------------------
+
+  const login = useCallback<AppContextValue["login"]>(async (email, password) => {
+    const data = await postJSON("/api/auth/login", { email, password });
+    if (!data.ok) return { ok: false, error: data.error ?? "Unable to sign in." };
+    applySession(data as MeResponse);
+    return { ok: true };
+  }, [applySession]);
+
+  const registerStudent = useCallback<AppContextValue["registerStudent"]>(
+    async (input) => {
+      const data = await postJSON("/api/auth/register", { role: "student", ...input });
+      if (!data.ok) return { ok: false, error: data.error ?? "Unable to create account." };
+      applySession(data as MeResponse);
+      return { ok: true };
+    },
+    [applySession],
+  );
+
+  const registerEmployer = useCallback<AppContextValue["registerEmployer"]>(
+    async (input) => {
+      const data = await postJSON("/api/auth/register", { role: "employer", ...input });
+      if (!data.ok) return { ok: false, error: data.error ?? "Unable to create account." };
+      applySession(data as MeResponse);
+      return { ok: true };
+    },
+    [applySession],
+  );
+
+  const logout = useCallback(() => {
+    clearSession();
+    void postJSON("/api/auth/logout");
+  }, [clearSession]);
+
+  // ---- Saved jobs -------------------------------------------------------
+
+  const toggleSave = useCallback<AppContextValue["toggleSave"]>((jobId) => {
+    setSavedJobs((prev) =>
+      prev.includes(jobId) ? prev.filter((id) => id !== jobId) : [...prev, jobId],
+    );
+    void postJSON("/api/saved", { jobId });
   }, []);
 
-  const persistAccounts = useCallback((next: Account[]) => {
-    setAccounts(next);
-    writeJSON(ACCOUNTS_KEY, next);
+  // ---- Applications -----------------------------------------------------
+
+  const addApplication = useCallback<AppContextValue["addApplication"]>((application) => {
+    setApplications((prev) => [
+      application,
+      ...prev.filter((item) => item.jobId !== application.jobId),
+    ]);
+    void postJSON("/api/applications", application);
   }, []);
 
-  const persistSession = useCallback((id: string | null) => {
-    setSessionId(id);
-    writeJSON(SESSION_KEY, id);
+  // ---- Student profile --------------------------------------------------
+
+  const updateStudentProfile = useCallback<AppContextValue["updateStudentProfile"]>((patch) => {
+    setUser((prev) =>
+      prev && prev.student ? { ...prev, student: { ...prev.student, ...patch } } : prev,
+    );
+    void postJSON("/api/profile", { patch });
   }, []);
+
+  // ---- Recent searches (local) -----------------------------------------
 
   const persistRecent = useCallback((next: RecentSearch[]) => {
     setRecentSearches(next);
     writeJSON(RECENT_KEY, next);
   }, []);
 
-  const currentAccount = useMemo(
-    () => accounts.find((account) => account.user.id === sessionId) ?? null,
-    [accounts, sessionId],
-  );
-
-  const updateCurrentAccount = useCallback(
-    (mutate: (account: Account) => Account) => {
-      if (!sessionId) return;
-      persistAccounts(
-        accounts.map((account) =>
-          account.user.id === sessionId ? mutate(account) : account,
-        ),
-      );
-    },
-    [accounts, persistAccounts, sessionId],
-  );
-
-  const login = useCallback<AppContextValue["login"]>(
-    (email, password) => {
-      const match = accounts.find(
-        (account) => account.user.email.toLowerCase() === email.trim().toLowerCase(),
-      );
-      if (!match) return { ok: false, error: "No account found for that email." };
-      if (match.password !== password) return { ok: false, error: "Incorrect password." };
-      persistSession(match.user.id);
-      return { ok: true };
-    },
-    [accounts, persistSession],
-  );
-
-  const registerStudent = useCallback<AppContextValue["registerStudent"]>(
-    ({ name, email, password, profile }) => {
-      const exists = accounts.some(
-        (account) => account.user.email.toLowerCase() === email.trim().toLowerCase(),
-      );
-      if (exists) return { ok: false, error: "An account with that email already exists." };
-      const id = uid("student");
-      const account: Account = {
-        password,
-        savedJobs: [],
-        applications: [],
-        activePlan: "Basic",
-        paymentMethod: null,
-        paymentHistory: [],
-        user: {
-          id,
-          role: "student",
-          name,
-          email: email.trim(),
-          createdAt: new Date().toISOString(),
-          student: profile,
-        },
-      };
-      persistAccounts([...accounts, account]);
-      persistSession(id);
-      return { ok: true };
-    },
-    [accounts, persistAccounts, persistSession],
-  );
-
-  const registerEmployer = useCallback<AppContextValue["registerEmployer"]>(
-    ({ name, email, password, profile }) => {
-      const exists = accounts.some(
-        (account) => account.user.email.toLowerCase() === email.trim().toLowerCase(),
-      );
-      if (exists) return { ok: false, error: "An account with that email already exists." };
-      const id = uid("employer");
-      const account: Account = {
-        password,
-        savedJobs: [],
-        applications: [],
-        activePlan: profile.plan ?? "First listing",
-        paymentMethod: null,
-        paymentHistory: [],
-        user: {
-          id,
-          role: "employer",
-          name,
-          email: email.trim(),
-          createdAt: new Date().toISOString(),
-          employer: profile,
-        },
-      };
-      persistAccounts([...accounts, account]);
-      persistSession(id);
-      return { ok: true };
-    },
-    [accounts, persistAccounts, persistSession],
-  );
-
-  const logout = useCallback(() => persistSession(null), [persistSession]);
-
-  const toggleSave = useCallback<AppContextValue["toggleSave"]>(
-    (jobId) => {
-      updateCurrentAccount((account) => ({
-        ...account,
-        savedJobs: account.savedJobs.includes(jobId)
-          ? account.savedJobs.filter((id) => id !== jobId)
-          : [...account.savedJobs, jobId],
-      }));
-    },
-    [updateCurrentAccount],
-  );
-
-  const addApplication = useCallback<AppContextValue["addApplication"]>(
-    (application) => {
-      updateCurrentAccount((account) => ({
-        ...account,
-        applications: [
-          application,
-          ...account.applications.filter((item) => item.jobId !== application.jobId),
-        ],
-      }));
-    },
-    [updateCurrentAccount],
-  );
-
-  const updateStudentProfile = useCallback<AppContextValue["updateStudentProfile"]>(
-    (patch) => {
-      updateCurrentAccount((account) => {
-        if (!account.user.student) return account;
-        return {
-          ...account,
-          user: {
-            ...account.user,
-            student: { ...account.user.student, ...patch },
-          },
-        };
-      });
-    },
-    [updateCurrentAccount],
-  );
-
   const addRecentSearch = useCallback<AppContextValue["addRecentSearch"]>(
     (search) => {
       if (!search.q && !search.location && !search.field) return;
       const entry: RecentSearch = { ...search, id: uid("search"), ts: Date.now() };
-      const deduped = recentSearches.filter(
-        (item) =>
-          item.q !== entry.q || item.location !== entry.location || item.field !== entry.field,
-      );
-      persistRecent([entry, ...deduped].slice(0, 6));
+      setRecentSearches((prev) => {
+        const deduped = prev.filter(
+          (item) =>
+            item.q !== entry.q || item.location !== entry.location || item.field !== entry.field,
+        );
+        const next = [entry, ...deduped].slice(0, 6);
+        writeJSON(RECENT_KEY, next);
+        return next;
+      });
     },
-    [persistRecent, recentSearches],
+    [],
   );
 
   const clearRecentSearches = useCallback(() => persistRecent([]), [persistRecent]);
 
-  const postListing = useCallback<AppContextValue["postListing"]>(
-    (listing) => {
-      const next = [listing, ...postedListings];
-      setPostedListings(next);
-      writeJSON(LISTINGS_KEY, next);
-    },
-    [postedListings],
-  );
+  // ---- Posted listings --------------------------------------------------
 
-  const setCart = useCallback<AppContextValue["setCart"]>(
-    (item) => {
-      setCartState(item);
-      writeJSON(CART_KEY, item);
-    },
-    [],
-  );
+  const postListing = useCallback<AppContextValue["postListing"]>((listing) => {
+    setPostedListings((prev) => [listing, ...prev]);
+    void postJSON("/api/listings", { listing });
+  }, []);
+
+  // ---- Cart (local) -----------------------------------------------------
+
+  const setCart = useCallback<AppContextValue["setCart"]>((item) => {
+    setCartState(item);
+    writeJSON(CART_KEY, item);
+  }, []);
 
   const clearCart = useCallback(() => {
     setCartState(null);
     writeJSON(CART_KEY, null);
   }, []);
 
+  // ---- Billing (simulated) ---------------------------------------------
+
   const upgradePlan = useCallback<AppContextValue["upgradePlan"]>(
     (plan, method, amount, description) => {
-      if (!sessionId) return;
-      persistAccounts(
-        accounts.map((account) => {
-          if (account.user.id !== sessionId) return account;
-          const record: PaymentRecord = {
-            id: `inv-${Date.now().toString(36)}`,
-            date: new Date().toISOString().split("T")[0],
-            description,
-            amount,
-            status: "Paid",
-          };
-          const updatedUser = account.user.role === "employer" && account.user.employer
-            ? { ...account.user, employer: { ...account.user.employer, plan } }
-            : account.user;
-          return {
-            ...account,
-            activePlan: plan,
-            paymentMethod: method,
-            paymentHistory: [record, ...(account.paymentHistory ?? [])],
-            user: updatedUser,
-          };
-        }),
+      const record: PaymentRecord = {
+        id: `inv-${Date.now().toString(36)}`,
+        date: new Date().toISOString().split("T")[0],
+        description,
+        amount,
+        status: "Paid",
+      };
+      setActivePlan(plan);
+      setPaymentMethod(method);
+      setPaymentHistory((prev) => [record, ...prev]);
+      setUser((prev) =>
+        prev && prev.role === "employer" && prev.employer
+          ? { ...prev, employer: { ...prev.employer, plan } }
+          : prev,
       );
+      void postJSON("/api/billing", { action: "upgrade", plan, method, amount, description });
     },
-    [accounts, persistAccounts, sessionId],
+    [],
   );
 
-  const updatePaymentMethod = useCallback<AppContextValue["updatePaymentMethod"]>(
-    (method) => {
-      updateCurrentAccount((account) => ({ ...account, paymentMethod: method }));
-    },
-    [updateCurrentAccount],
-  );
+  const updatePaymentMethod = useCallback<AppContextValue["updatePaymentMethod"]>((method) => {
+    setPaymentMethod(method);
+    void postJSON("/api/billing", { action: "updateMethod", method });
+  }, []);
 
   const cancelPlan = useCallback<AppContextValue["cancelPlan"]>(() => {
-    updateCurrentAccount((account) => ({ ...account, activePlan: "Basic" }));
-  }, [updateCurrentAccount]);
+    setActivePlan("Basic");
+    void postJSON("/api/billing", { action: "cancel" });
+  }, []);
+
+  // ---- Reviews ----------------------------------------------------------
 
   const addReview = useCallback<AppContextValue["addReview"]>((review) => {
     const entry: Review = { ...review, id: uid("review"), date: new Date().toISOString() };
-    setReviews((prev) => {
-      const next = [entry, ...prev];
-      writeJSON(REVIEWS_KEY, next);
-      return next;
-    });
+    setReviews((prev) => [entry, ...prev]);
+    void postJSON("/api/reviews", review);
   }, []);
 
   const value = useMemo<AppContextValue>(
     () => ({
       ready,
-      user: currentAccount?.user ?? null,
-      savedJobs: currentAccount?.savedJobs ?? [],
-      applications: currentAccount?.applications ?? [],
+      user,
+      savedJobs,
+      applications,
       recentSearches,
       postedListings,
       cart,
-      activePlan: currentAccount?.activePlan ??
-        (currentAccount?.user.role === "employer"
-          ? currentAccount.user.employer?.plan ?? "First listing"
-          : "Basic"),
-      paymentMethod: currentAccount?.paymentMethod ?? null,
-      paymentHistory: currentAccount?.paymentHistory ?? [],
+      activePlan,
+      paymentMethod,
+      paymentHistory,
       login,
       registerStudent,
       registerEmployer,
       logout,
       toggleSave,
-      isSaved: (jobId) => Boolean(currentAccount?.savedJobs.includes(jobId)),
+      isSaved: (jobId) => savedJobs.includes(jobId),
       addApplication,
-      hasApplied: (jobId) =>
-        Boolean(currentAccount?.applications.some((item) => item.jobId === jobId)),
+      hasApplied: (jobId) => applications.some((item) => item.jobId === jobId),
       updateStudentProfile,
       addRecentSearch,
       clearRecentSearches,
@@ -530,12 +354,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }),
     [
       ready,
-      currentAccount,
+      user,
+      savedJobs,
+      applications,
       recentSearches,
       postedListings,
       cart,
+      activePlan,
+      paymentMethod,
+      paymentHistory,
       reviews,
-      addReview,
       login,
       registerStudent,
       registerEmployer,
@@ -551,6 +379,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       upgradePlan,
       updatePaymentMethod,
       cancelPlan,
+      addReview,
     ],
   );
 
