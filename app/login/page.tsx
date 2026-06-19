@@ -49,7 +49,7 @@ function LoginForm() {
   };
 
   const fillDemo = (role: "student" | "employer") => {
-    setEmail(role === "student" ? "student@demo.com" : "employer@demo.com");
+    setEmail(role === "student" ? "student@demo.com" : "google@employer.demo");
     setPassword("password");
     setError("");
     setFieldErrors({ email: "", password: "" });

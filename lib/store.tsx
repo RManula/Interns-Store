@@ -45,6 +45,7 @@ type AppContextValue = {
   applications: Application[];
   recentSearches: RecentSearch[];
   postedListings: Internship[];
+  removedListingIds: string[];
   cart: CartItem | null;
   activePlan: string;
   paymentMethod: PaymentMethod | null;
@@ -61,6 +62,7 @@ type AppContextValue = {
   addRecentSearch: (search: Omit<RecentSearch, "id" | "ts">) => void;
   clearRecentSearches: () => void;
   postListing: (listing: Internship) => void;
+  deleteListing: (jobId: string) => void;
   setCart: (item: CartItem) => void;
   clearCart: () => void;
   upgradePlan: (plan: string, method: PaymentMethod, amount: number, description: string) => void;
@@ -122,6 +124,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
   const [paymentHistory, setPaymentHistory] = useState<PaymentRecord[]>([]);
   const [postedListings, setPostedListings] = useState<Internship[]>([]);
+  const [removedListingIds, setRemovedListingIds] = useState<string[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [recentSearches, setRecentSearches] = useState<RecentSearch[]>([]);
   const [cart, setCartState] = useState<CartItem | null>(null);
@@ -160,6 +163,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
         applySession(meRes as MeResponse);
         setPostedListings((listRes?.listings ?? []) as Internship[]);
+        setRemovedListingIds((listRes?.removed ?? []) as string[]);
         setReviews((revRes?.reviews ?? []) as Review[]);
       } finally {
         if (!cancelled) setReady(true);
@@ -266,6 +270,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     void postJSON("/api/listings", { listing });
   }, []);
 
+  const deleteListing = useCallback<AppContextValue["deleteListing"]>((jobId) => {
+    setRemovedListingIds((prev) => (prev.includes(jobId) ? prev : [...prev, jobId]));
+    setPostedListings((prev) => prev.filter((item) => item.id !== jobId));
+    void fetch("/api/listings", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ jobId }),
+    });
+  }, []);
+
   // ---- Cart (local) -----------------------------------------------------
 
   const setCart = useCallback<AppContextValue["setCart"]>((item) => {
@@ -328,6 +342,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       applications,
       recentSearches,
       postedListings,
+      removedListingIds,
       cart,
       activePlan,
       paymentMethod,
@@ -344,6 +359,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addRecentSearch,
       clearRecentSearches,
       postListing,
+      deleteListing,
       setCart,
       clearCart,
       upgradePlan,
@@ -359,6 +375,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       applications,
       recentSearches,
       postedListings,
+      removedListingIds,
       cart,
       activePlan,
       paymentMethod,
@@ -374,6 +391,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       addRecentSearch,
       clearRecentSearches,
       postListing,
+      deleteListing,
       setCart,
       clearCart,
       upgradePlan,

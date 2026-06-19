@@ -3,11 +3,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { JobDetail } from "@/components/browse/JobDetail";
-import { companies, getCompany, getInternship, internships } from "@/lib/data";
+import { companies, getCompany, internships } from "@/lib/data";
+import { resolveInternship } from "@/lib/listings";
 
-export function generateStaticParams() {
-  return internships.map((item) => ({ id: item.id }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -15,13 +14,13 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const internship = getInternship(id);
+  const internship = await resolveInternship(id);
   return { title: internship ? `${internship.role} at ${internship.company}` : "Internship" };
 }
 
 export default async function InternshipPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const internship = getInternship(id);
+  const internship = await resolveInternship(id);
   if (!internship) notFound();
   const company = getCompany(internship.companyId);
   const related = internships

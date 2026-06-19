@@ -126,6 +126,8 @@ export type EmployerProfile = {
   position: string;
   phone: string;
   plan: string;
+  /** Set for seeded company accounts — links the account to a catalogue company. */
+  companyId?: string;
 };
 
 export type User = {

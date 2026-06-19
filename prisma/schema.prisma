@@ -75,6 +75,14 @@ model Listing {
   @@index([postedById])
 }
 
+// Tracks catalogue/posted listings an employer has removed, so they disappear
+// from the marketplace for everyone (the static catalogue stays as the seed).
+model RemovedListing {
+  jobId     String   @id
+  removedBy String?
+  createdAt DateTime @default(now())
+}
+
 model Review {
   id          String   @id @default(cuid())
   companyId   String

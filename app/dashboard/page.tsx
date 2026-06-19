@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -9,10 +9,12 @@ import {
   Building2,
   FileText,
   GraduationCap,
+  Mail,
   MapPin,
   Plus,
   Rocket,
   Star,
+  Trash2,
   Users,
 } from "lucide-react";
 import { useApp } from "@/lib/store";
@@ -150,13 +152,73 @@ function StudentDashboard() {
   );
 }
 
+type EmployerApplication = {
+  id: string;
+  jobId: string;
+  jobRole: string;
+  company: string;
+  status: ApplicationStatus;
+  submittedAt: string;
+  resumeName: string | null;
+  coverLetter: string | null;
+  applicantName: string;
+  applicantEmail: string;
+  applicantHeadline: string | null;
+  applicantLocation: string | null;
+  applicantSkills: string[];
+};
+
 function EmployerDashboard() {
-  const { user, postedListings } = useApp();
+  const { user, postedListings, removedListingIds, deleteListing } = useApp();
   const employer = user?.employer;
-  const myListings = postedListings.filter(
-    (item) => item.companyId === user?.id || item.company === employer?.companyName,
-  );
-  const displayed = myListings.length ? myListings : [];
+  const companyId = employer?.companyId;
+
+  // Listings this employer owns: their company's catalogue roles + anything they
+  // posted, minus anything they've removed.
+  const myListings = useMemo(() => {
+    const removed = new Set(removedListingIds);
+    const catalogue = companyId ? internships.filter((i) => i.companyId === companyId) : [];
+    const posted = postedListings.filter(
+      (i) => i.companyId === user?.id || i.company === employer?.companyName,
+    );
+    const seen = new Set<string>();
+    return [...posted, ...catalogue].filter((i) => {
+      if (removed.has(i.id) || seen.has(i.id)) return false;
+      seen.add(i.id);
+      return true;
+    });
+  }, [companyId, postedListings, removedListingIds, user?.id, employer?.companyName]);
+
+  const [applications, setApplications] = useState<EmployerApplication[]>([]);
+  const [loadingApps, setLoadingApps] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/employer/applications")
+      .then((r) => r.json())
+      .then((d) => {
+        if (!cancelled) setApplications(d.applications ?? []);
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setLoadingApps(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const countsByJob = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const a of applications) m.set(a.jobId, (m.get(a.jobId) ?? 0) + 1);
+    return m;
+  }, [applications]);
+
+  const handleDelete = (id: string, role: string) => {
+    if (window.confirm(`Remove “${role}” from the marketplace? Students will no longer see or be able to apply to it.`)) {
+      deleteListing(id);
+    }
+  };
 
   return (
     <div className="bg-surface pb-24 pt-28">
@@ -170,37 +232,91 @@ function EmployerDashboard() {
         </div>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
-          <Stat icon={BriefcaseBusiness} label="Active listings" value={displayed.length} />
-          <Stat icon={Users} label="Total applicants" value={displayed.reduce((sum, _, i) => sum + (i + 1) * 5 + 3, 0)} />
+          <Stat icon={BriefcaseBusiness} label="Active listings" value={myListings.length} />
+          <Stat icon={Users} label="Total applicants" value={loadingApps ? "…" : applications.length} />
           <Stat icon={Building2} label="Current plan" value={employer?.plan ?? "—"} />
         </div>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_320px]">
-          <Panel title="Your listings">
-            {displayed.length > 0 ? (
-              <div className="space-y-3">
-                {displayed.map((item, index) => (
-                  <div key={item.id} className="flex items-center justify-between rounded-xl border border-line p-4">
-                    <div>
-                      <Link href={`/internships/${item.id}`} className="font-heading font-semibold text-navy-950 hover:text-blue-700">
-                        {item.role}
-                      </Link>
-                      <p className="text-xs text-muted">{item.location} · {item.workType}</p>
+          <div className="space-y-6">
+            <Panel title="Your listings">
+              {myListings.length > 0 ? (
+                <div className="space-y-3">
+                  {myListings.map((item) => {
+                    const count = countsByJob.get(item.id) ?? 0;
+                    return (
+                      <div key={item.id} className="flex items-center justify-between gap-3 rounded-xl border border-line p-4">
+                        <div className="min-w-0">
+                          <Link href={`/internships/${item.id}`} className="font-heading font-semibold text-navy-950 hover:text-blue-700">
+                            {item.role}
+                          </Link>
+                          <p className="text-xs text-muted">{item.location} · {item.workType}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                            {count} {count === 1 ? "applicant" : "applicants"}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(item.id, item.role)}
+                            aria-label={`Delete ${item.role}`}
+                            className="grid size-8 place-items-center rounded-lg border border-line text-muted transition hover:border-coral-500/40 hover:bg-coral-500/10 hover:text-coral-600"
+                          >
+                            <Trash2 size={15} />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <EmptyState
+                  text="You don't have any active listings."
+                  cta="Post an internship"
+                  href="/post"
+                />
+              )}
+            </Panel>
+
+            <Panel title="Applicants">
+              {loadingApps ? (
+                <p className="text-sm text-muted">Loading applicants…</p>
+              ) : applications.length > 0 ? (
+                <div className="space-y-3">
+                  {applications.map((app) => (
+                    <div key={app.id} className="rounded-xl border border-line p-4">
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <p className="font-heading font-semibold text-navy-950">{app.applicantName}</p>
+                          <p className="text-xs text-muted">{app.applicantHeadline ?? "Student"}{app.applicantLocation ? ` · ${app.applicantLocation}` : ""}</p>
+                        </div>
+                        <span className={cn("rounded-full px-3 py-1 text-xs font-bold", STATUS_STYLES[app.status] ?? STATUS_STYLES.Submitted)}>
+                          {app.status}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-sm text-navy-900">
+                        Applied for <Link href={`/internships/${app.jobId}`} className="font-bold text-blue-700 hover:underline">{app.jobRole}</Link> · {formatDate(app.submittedAt)}
+                      </p>
+                      {app.applicantSkills.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {app.applicantSkills.slice(0, 6).map((skill) => (
+                            <span key={skill} className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-bold text-blue-700">{skill}</span>
+                          ))}
+                        </div>
+                      )}
+                      <a href={`mailto:${app.applicantEmail}`} className="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-blue-700 hover:underline">
+                        <Mail size={13} /> {app.applicantEmail}
+                      </a>
                     </div>
-                    <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
-                      {(index + 1) * 5 + 3} applicants
-                    </span>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                text="You haven't posted any internships yet."
-                cta="Post your first internship"
-                href="/post"
-              />
-            )}
-          </Panel>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-xl border border-dashed border-line p-8 text-center">
+                  <p className="text-sm text-muted">No applications yet. They&apos;ll appear here as students apply to your listings.</p>
+                </div>
+              )}
+            </Panel>
+          </div>
 
           <aside className="space-y-4">
             <div className="rounded-2xl border border-line bg-white p-5">

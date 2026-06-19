@@ -46,35 +46,37 @@ async function main() {
     },
   });
 
-  // --- Demo employer ------------------------------------------------------
-  await prisma.user.upsert({
-    where: { email: "employer@demo.com" },
-    update: {},
-    create: {
-      role: "employer",
-      name: "Jordan Wells",
-      email: "employer@demo.com",
-      passwordHash,
-      activePlan: "Per listing",
-      paymentMethod: { type: "Visa", last4: "4242", expiry: "12/28" },
-      paymentHistory: [
-        { id: "inv-001", date: "2026-05-14", description: "Growth Plan", amount: 165.0, status: "Paid" },
-        { id: "inv-002", date: "2026-04-14", description: "Growth Plan", amount: 165.0, status: "Paid" },
-        { id: "inv-003", date: "2026-03-14", description: "Growth Plan", amount: 165.0, status: "Paid" },
-      ],
-      employer: {
-        companyName: "Canopy Labs",
-        abn: "12 345 678 901",
-        industry: "Design & Product Studio",
-        companySize: "51-200 employees",
-        website: "https://canopylabs.example",
-        contactName: "Jordan Wells",
-        position: "People Lead",
-        phone: "+61 7 3000 0000",
-        plan: "Per listing",
+  // --- Real employer accounts, one per company ---------------------------
+  // Each account "owns" all catalogue listings whose companyId matches, so the
+  // employer sees those listings + their applications and can delete them.
+  // Remove the old placeholder demo employer if it exists.
+  await prisma.user.deleteMany({ where: { email: "employer@demo.com" } });
+
+  const COMPANY_ACCOUNTS = [
+    { companyId: "atlassian", email: "atlassian@employer.demo", companyName: "Atlassian", industry: "Software & Technology", companySize: "10,000+ employees", website: "https://www.atlassian.com", abn: "53 102 443 916", contactName: "Talent Team" },
+    { companyId: "google", email: "google@employer.demo", companyName: "Google", industry: "Technology", companySize: "180,000+ employees", website: "https://careers.google.com", abn: "33 102 417 032", contactName: "University Recruiting" },
+    { companyId: "commbank", email: "commbank@employer.demo", companyName: "CommBank", industry: "Banking & Financial Services", companySize: "50,000+ employees", website: "https://www.commbank.com.au/careers", abn: "48 123 123 124", contactName: "Early Careers" },
+    { companyId: "nab", email: "nab@employer.demo", companyName: "NAB", industry: "Banking & Financial Services", companySize: "38,000+ employees", website: "https://www.nab.com.au/about-us/careers", abn: "12 004 044 937", contactName: "Emerging Talent" },
+    { companyId: "bhp", email: "bhp@employer.demo", companyName: "BHP", industry: "Mining & Resources", companySize: "80,000+ employees", website: "https://www.bhp.com/careers", abn: "49 004 028 077", contactName: "Graduate Programs" },
+    { companyId: "woolworths-group", email: "woolworths@employer.demo", companyName: "Woolworths Group", industry: "Retail & Technology", companySize: "200,000+ employees", website: "https://www.woolworthsgroup.com.au/careers", abn: "88 000 014 675", contactName: "Talent Acquisition" },
+    { companyId: "coles-group", email: "coles@employer.demo", companyName: "Coles Group", industry: "Retail", companySize: "120,000+ employees", website: "https://www.colescareers.com.au", abn: "11 004 089 936", contactName: "Early Careers" },
+    { companyId: "jb-hi-fi", email: "jbhifi@employer.demo", companyName: "JB Hi-Fi", industry: "Retail (Consumer Electronics)", companySize: "14,000+ employees", website: "https://careers.jbhifi.com.au", abn: "80 093 220 136", contactName: "People & Culture" },
+  ];
+
+  for (const acc of COMPANY_ACCOUNTS) {
+    await prisma.user.upsert({
+      where: { email: acc.email },
+      update: { employer: { companyId: acc.companyId, companyName: acc.companyName, abn: acc.abn, industry: acc.industry, companySize: acc.companySize, website: acc.website, contactName: acc.contactName, position: "Internship Program Lead", phone: "+61 2 8000 0000", plan: "Unlimited" } },
+      create: {
+        role: "employer",
+        name: acc.companyName,
+        email: acc.email,
+        passwordHash,
+        activePlan: "Unlimited",
+        employer: { companyId: acc.companyId, companyName: acc.companyName, abn: acc.abn, industry: acc.industry, companySize: acc.companySize, website: acc.website, contactName: acc.contactName, position: "Internship Program Lead", phone: "+61 2 8000 0000", plan: "Unlimited" },
       },
-    },
-  });
+    });
+  }
 
   // --- Demo student (Pro) with saved jobs ---------------------------------
   const pro = await prisma.user.upsert({
@@ -140,7 +142,7 @@ async function main() {
     await prisma.review.upsert({ where: { id: r.id }, update: {}, create: r });
   }
 
-  console.log("Seed complete: 3 demo accounts + 3 reviews.");
+  console.log("Seed complete: 2 student demos + 8 company employer accounts + 3 reviews.");
 }
 
 main()

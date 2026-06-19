@@ -202,19 +202,124 @@ export const companies: Company[] = [
   },
 ];
 
-const DEFAULT_PERKS = [
-  "Paid, mentored internship",
-  "Real projects with a real team",
-  "Flexible hybrid arrangement",
-  "Reference and portfolio outcomes",
-];
+// Field-specific content so each listing reads differently instead of sharing
+// one generic description. `responsibilities` is built from the role + company.
+type FieldDetail = {
+  responsibilities: (role: string, company: string) => string;
+  requirements: string[];
+  perks: string[];
+};
 
-const DEFAULT_REQS = [
-  "Currently studying or a recent graduate",
-  "Genuine interest in the field",
-  "Strong communication and teamwork",
-  "Eligible to work in Australia",
-];
+const FIELD_DETAILS: Record<string, FieldDetail> = {
+  Technology: {
+    responsibilities: (role, c) =>
+      `As a ${role} at ${c}, you'll write, review and ship production code alongside senior engineers — building features, fixing real bugs, and learning how ${c} designs, tests and deploys software at scale. You'll pair-program, take part in code reviews, and own a small project end-to-end by the end of the program.`,
+    requirements: [
+      "Working towards a degree in Computer Science, Software Engineering or similar",
+      "Comfortable with at least one language (e.g. Python, Java or JavaScript)",
+      "Understanding of data structures, Git and basic algorithms",
+      "Eager to learn and act on feedback in code reviews",
+      "Eligible to work in Australia",
+    ],
+    perks: ["Mentorship from senior engineers", "Real production code from week one", "Flexible hybrid working", "Return-offer & graduate pathway"],
+  },
+  Design: {
+    responsibilities: (role, c) =>
+      `As a ${role} at ${c}, you'll work end-to-end on real product problems — from user research and wireframes to high-fidelity prototypes in Figma. You'll test designs with real users, contribute to ${c}'s design system, and present your thinking to product and engineering partners.`,
+    requirements: [
+      "Studying Design, HCI, UX or a related field",
+      "A portfolio showing UX/UI or visual design work",
+      "Familiarity with Figma or similar design tools",
+      "Strong communication and a user-first mindset",
+      "Eligible to work in Australia",
+    ],
+    perks: ["1:1 design mentorship", "Own real product flows", "Portfolio-ready outcomes", "Flexible hybrid working"],
+  },
+  "Data & Analytics": {
+    responsibilities: (role, c) =>
+      `As a ${role} at ${c}, you'll turn raw data into insight — building pipelines, writing SQL, and creating dashboards that inform real decisions. You'll work with analysts and engineers to model data, validate findings, and present recommendations to stakeholders.`,
+    requirements: [
+      "Studying Data Science, Statistics, Maths or a related field",
+      "Hands-on with SQL and a language like Python or R",
+      "Some experience with data visualisation (Power BI, Tableau or similar)",
+      "Curiosity and strong attention to detail",
+      "Eligible to work in Australia",
+    ],
+    perks: ["Mentorship from senior analysts", "Work with real, large-scale data", "Exposure to the full data stack", "Flexible hybrid working"],
+  },
+  "Cyber Security": {
+    responsibilities: (role, c) =>
+      `As a ${role} at ${c}, you'll help defend systems and customers — assisting with threat detection, vulnerability assessments, and security tooling. You'll learn how a mature security team monitors, responds to and prevents incidents in a high-stakes environment.`,
+    requirements: [
+      "Studying Cyber Security, Computer Science or a related field",
+      "Foundational understanding of networks, operating systems and security concepts",
+      "Familiarity with tools like Wireshark, Burp Suite or a SIEM is a plus",
+      "Ethical mindset and strong problem-solving",
+      "Eligible to work in Australia",
+    ],
+    perks: ["Mentorship from security experts", "Hands-on with industry tooling", "Exposure to real incident response", "Flexible hybrid working"],
+  },
+  Engineering: {
+    responsibilities: (role, c) =>
+      `As a ${role} at ${c}, you'll support real engineering projects — assisting with design, analysis and on-site work under experienced engineers. You'll apply classroom theory to practical problems and contribute to project documentation and reviews.`,
+    requirements: [
+      "Working towards a degree in Mechanical, Electrical or related Engineering",
+      "Solid grasp of core engineering fundamentals",
+      "Comfortable with CAD or analysis tools relevant to your discipline",
+      "Safety-conscious with strong teamwork",
+      "Eligible to work in Australia",
+    ],
+    perks: ["Mentorship from chartered engineers", "Real site and project exposure", "Safety-first, supportive culture", "Graduate program pathway"],
+  },
+  Business: {
+    responsibilities: (role, c) =>
+      `As a ${role} at ${c}, you'll sit between teams to help things run better — gathering requirements, analysing processes, and supporting projects that improve how the business operates. You'll document findings, support stakeholders, and help deliver real outcomes.`,
+    requirements: [
+      "Studying Business, Commerce, IT or a related field",
+      "Strong analytical and communication skills",
+      "Comfortable with Excel and presenting findings",
+      "Organised, proactive and detail-oriented",
+      "Eligible to work in Australia",
+    ],
+    perks: ["Mentorship from experienced leaders", "Cross-team project exposure", "Real ownership of deliverables", "Flexible hybrid working"],
+  },
+  "Supply Chain": {
+    responsibilities: (role, c) =>
+      `As a ${role} at ${c}, you'll help keep one of Australia's largest supply chains moving — supporting planning, procurement and inventory analysis. You'll work with data and operations teams to spot improvements and support day-to-day logistics decisions.`,
+    requirements: [
+      "Studying Supply Chain, Logistics, Business or a related field",
+      "Strong numerical and analytical skills",
+      "Comfortable working with data and spreadsheets",
+      "Practical, organised and a clear communicator",
+      "Eligible to work in Australia",
+    ],
+    perks: ["Mentorship from supply-chain leaders", "Exposure to national-scale logistics", "Real data and operations work", "Flexible hybrid working"],
+  },
+  Marketing: {
+    responsibilities: (role, c) =>
+      `As a ${role} at ${c}, you'll support live campaigns — helping create content, analyse performance, and coordinate across channels. You'll learn how a recognised brand plans, runs and measures marketing, and you'll contribute ideas of your own.`,
+    requirements: [
+      "Studying Marketing, Communications, Business or a related field",
+      "Strong writing and creative thinking",
+      "Familiarity with social and digital channels (analytics a plus)",
+      "Organised and comfortable juggling multiple tasks",
+      "Eligible to work in Australia",
+    ],
+    perks: ["Mentorship from marketing leaders", "Work on real campaigns", "Creative ownership", "Flexible hybrid working"],
+  },
+};
+
+const FALLBACK_DETAIL: FieldDetail = {
+  responsibilities: (role, c) =>
+    `As a ${role} at ${c}, you'll work alongside experienced mentors on live projects, contribute to real outcomes, and learn how a high-performing team plans, builds and ships — with structured guidance throughout.`,
+  requirements: [
+    "Currently studying or a recent graduate",
+    "Genuine interest in the field",
+    "Strong communication and teamwork",
+    "Eligible to work in Australia",
+  ],
+  perks: ["Paid, mentored internship", "Real projects with a real team", "Flexible hybrid arrangement", "Reference and portfolio outcomes"],
+};
 
 function job(
   companyId: string,
@@ -241,6 +346,7 @@ function job(
   },
 ): Internship {
   const c = companies.find((x) => x.id === companyId)!;
+  const detail = FIELD_DETAILS[o.field] ?? FALLBACK_DETAIL;
   return {
     id: o.id,
     role: o.role,
@@ -261,11 +367,9 @@ function job(
     color: c.color,
     summary: o.summary,
     about: o.about ?? c.about,
-    responsibilities:
-      o.responsibilities ??
-      `As a ${o.role} at ${c.name}, you'll work alongside experienced mentors on live projects, contribute to real outcomes, and learn how a high-performing team plans, builds and ships — with structured guidance throughout.`,
-    perks: o.perks ?? c.benefits ?? DEFAULT_PERKS,
-    requirements: o.requirements ?? DEFAULT_REQS,
+    responsibilities: o.responsibilities ?? detail.responsibilities(o.role, c.name),
+    perks: o.perks ?? detail.perks,
+    requirements: o.requirements ?? detail.requirements,
     questions: baseQuestions(),
   };
 }

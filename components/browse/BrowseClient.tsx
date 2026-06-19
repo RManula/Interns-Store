@@ -54,7 +54,7 @@ export function BrowseClient({
   initialField,
 }: BrowseClientProps) {
   const router = useRouter();
-  const { user, toggleSave, recentSearches, addRecentSearch, clearRecentSearches, postedListings } = useApp();
+  const { user, toggleSave, recentSearches, addRecentSearch, clearRecentSearches, postedListings, removedListingIds } = useApp();
 
   const [query, setQuery] = useState(initialQuery);
   const [location, setLocation] = useState(initialLocation);
@@ -69,10 +69,15 @@ export function BrowseClient({
   const [selectedId, setSelectedId] = useState<string>("");
   const [isDesktop, setIsDesktop] = useState(true);
 
-  const allInternships = useMemo(
-    () => [...postedListings, ...internships],
-    [postedListings, internships],
-  );
+  const allInternships = useMemo(() => {
+    const removed = new Set(removedListingIds);
+    const seen = new Set<string>();
+    return [...postedListings, ...internships].filter((item) => {
+      if (removed.has(item.id) || seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  }, [postedListings, internships, removedListingIds]);
 
   const companyMap = useMemo(
     () => new Map(companies.map((company) => [company.id, company])),
