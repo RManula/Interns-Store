@@ -110,12 +110,39 @@ APP_SECRET="<random 32-byte hex string>"         # signs the session cookie
 
 ```bash
 npm run db:push    # create the tables from prisma/schema.prisma
-npm run db:seed    # load 3 demo accounts + seed reviews
+npm run db:seed    # load demo accounts + seed reviews
 npm run db:studio  # (optional) browse data in Prisma Studio
 ```
 
-Demo logins (password `password`): `student@demo.com`, `employer@demo.com`,
-`pro@demo.com`.
+### Demo accounts
+
+All demo accounts use the password **`password`**. These are seeded demo
+credentials for a class project — not real accounts.
+
+**Students**
+
+| Email | Notes |
+| --- | --- |
+| `student@demo.com` | Free (Basic) student account |
+| `pro@demo.com` | Pro student account with saved jobs |
+
+**Employers** (one per company — each owns that company's listings, sees its
+applicants, and can delete its listings)
+
+| Email | Company |
+| --- | --- |
+| `google@employer.demo` | Google |
+| `atlassian@employer.demo` | Atlassian |
+| `commbank@employer.demo` | CommBank |
+| `nab@employer.demo` | NAB |
+| `bhp@employer.demo` | BHP |
+| `woolworths@employer.demo` | Woolworths Group |
+| `coles@employer.demo` | Coles Group |
+| `jbhifi@employer.demo` | JB Hi-Fi |
+
+**Try the full loop:** sign in as `student@demo.com`, apply to any listing, then
+sign in as that company's employer account to see the application appear in the
+dashboard.
 
 ### API routes
 
@@ -126,7 +153,8 @@ Demo logins (password `password`): `student@demo.com`, `employer@demo.com`,
 | `POST /api/saved` | Toggle a saved job |
 | `POST /api/applications` | Submit an application |
 | `PATCH /api/profile` | Update student profile |
-| `GET/POST /api/listings` | List / publish employer internships |
+| `GET /api/listings` · `POST` · `DELETE` | List / publish / remove employer internships |
+| `GET /api/employer/applications` | Applicants for the employer's listings |
 | `GET/POST /api/reviews` | List / add company reviews |
 | `POST /api/billing` | Simulated plan upgrade / payment method / cancel |
 
